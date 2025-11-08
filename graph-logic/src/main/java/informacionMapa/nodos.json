@@ -1,0 +1,153 @@
+[
+  {
+    "nombre": "San Luis Potosí",
+    "x": 400,
+    "y": 300
+  },
+          
+  {
+    "nombre": "Soledad de Graciano Sánchez",
+    "x": 410,
+    "y": 295
+  },
+  {
+    "nombre": "Mexquitic de Carmona",
+    "x": 380,
+    "y": 290
+  },
+  {
+    "nombre": "Zaragoza",
+    "x": 435,
+    "y": 340
+  },
+  {
+    "nombre": "Cerro de San Pedro",
+    "x": 425,
+    "y": 285
+  },
+  {
+    "nombre": "Ahualulco",
+    "x": 340,
+    "y": 290
+  },
+  {
+    "nombre": "Villa de Reyes",
+    "x": 390,
+    "y": 380
+  },
+  {
+    "nombre": "Santa María del Río",
+    "x": 410,
+    "y": 420
+  },
+  {
+    "nombre": "Villa de Arriaga",
+    "x": 330,
+    "y": 330
+  },
+  {
+    "nombre": "Tierra Nueva",
+    "x": 430,
+    "y": 400
+  },
+  {
+    "nombre": "Armadillo de los Infante",
+    "x": 450,
+    "y": 270
+  },
+  {
+    "nombre": "Villa Hidalgo",
+    "x": 440,
+    "y": 240
+  },
+  {
+    "nombre": "Salinas",
+    "x": 280,
+    "y": 290
+  },
+  {
+    "nombre": "Moctezuma",
+    "x": 360,
+    "y": 220
+  },
+  {
+    "nombre": "Venado",
+    "x": 390,
+    "y": 200
+  },
+  {
+    "nombre": "Villa de Guadalupe",
+    "x": 430,
+    "y": 140
+  },
+  {
+    "nombre": "Charcas",
+    "x": 410,
+    "y": 120
+  },
+  {
+    "nombre": "Cedral",
+    "x": 400,
+    "y": 80
+  },
+  {
+    "nombre": "Matehuala",
+    "x": 420,
+    "y": 60
+  },
+  {
+    "nombre": "Catorce",
+    "x": 380,
+    "y": 70
+  },
+  {
+    "nombre": "Vanegas",
+    "x": 390,
+    "y": 30
+  },
+  {
+    "nombre": "Villa de la Paz",
+    "x": 430,
+    "y": 70
+  },
+  {
+    "nombre": "Santo Domingo",
+    "x": 330,
+    "y": 190
+  },
+  {
+    "nombre": "Villa Juárez",
+    "x": 520,
+    "y": 360
+  },
+  {
+    "nombre": "San Nicolás Tolentino",
+    "x": 470,
+    "y": 370
+  },
+  {
+    "nombre": "Rioverde",
+    "x": 550,
+    "y": 380
+  },
+  {
+    "nombre": "Ciudad Fernández",
+    "x": 545,
+    "y": 385
+  },
+  {
+    "nombre": "Cerritos",
+    "x": 510,
+    "y": 310
+  },
+  {
+    "nombre": "San Ciro de Acosta",
+    "x": 580,
+    "y": 410
+  },
+  {
+    "nombre": "Cárdenas",
+    "x": 590,
+    "y": 360
+  }
+]
