@@ -1,4 +1,4 @@
-package view;
+package view.panels;
 
 import algorithms.GraphAlgorithms;
 import graphs.Graphm;
