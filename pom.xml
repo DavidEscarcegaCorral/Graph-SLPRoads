@@ -11,6 +11,7 @@
     <modules>
         <module>graph-logic</module>
         <module>graph-view</module>
+
     </modules>
 
     <properties>
