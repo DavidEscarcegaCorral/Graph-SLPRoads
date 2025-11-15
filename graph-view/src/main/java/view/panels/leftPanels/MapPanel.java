@@ -1,4 +1,4 @@
-package view.panels;
+package view.panels.leftPanels;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

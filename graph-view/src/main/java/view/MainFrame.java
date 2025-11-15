@@ -1,7 +1,6 @@
 package view;
 
-import view.panels.MainPanel;
-import view.panels.PanelMainFrame;
+import view.panels.MainAppPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,13 +15,13 @@ public class MainFrame extends JFrame {
         super("Graph-SLPRoads");
 
 //        MainPanel mainPanel = new MainPanel();
-        PanelMainFrame panelMainFrame = new PanelMainFrame();
+        MainAppPanel mainAppPanel = new MainAppPanel();
         setSize(1380, 800);
         getContentPane().setBackground(Color.white);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        add(panelMainFrame);
+        add(mainAppPanel);
 
     }
 }

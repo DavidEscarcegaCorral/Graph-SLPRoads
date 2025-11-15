@@ -1,4 +1,4 @@
-package view.panels;
+package view.panels.rightPanels;
 
 import view.styles.Button;
 import view.styles.Colors;
