@@ -1,4 +1,4 @@
-package view.panels;
+package view.panels.leftPanels;
 
 import algorithms.GraphAlgorithms;
 import interfaces.IGraph;
@@ -21,6 +21,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
     private static final int NODE_RADIUS = NODE_DIAMETER / 2;
 
     public GraphPanel(IGraph g) {
+        setOpaque(false);
         this.graph = g;
         this.positions = new Point[graph.vertexCount()];
         this.visitedEdges = new boolean[graph.vertexCount()][graph.vertexCount()];
@@ -30,11 +31,11 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
         // Posiciones de los fokin nodos
         int nodeCount = graph.vertexCount();
-        if (nodeCount > 0) positions[0] = new Point(100, 225); // Nodo 0
-        if (nodeCount > 1) positions[1] = new Point(300, 100); // Nodo 1
-        if (nodeCount > 2) positions[2] = new Point(300, 350); // Nodo 2
-        if (nodeCount > 3) positions[3] = new Point(500, 100); // Nodo 3
-        if (nodeCount > 4) positions[4] = new Point(500, 350); // Nodo 4
+        if (nodeCount > 0) positions[0] = new Point(100, 225);
+        if (nodeCount > 1) positions[1] = new Point(300, 100);
+        if (nodeCount > 2) positions[2] = new Point(300, 350);
+        if (nodeCount > 3) positions[3] = new Point(500, 100);
+        if (nodeCount > 4) positions[4] = new Point(500, 350);
 
         for (int i = 0; i < nodeCount; i++) {
             if (positions[i] == null) {

@@ -8,41 +8,36 @@ import java.awt.*;
 
 public class MainAppPanel extends JSplitPane {
     private static final double SPLIT_RATIO = 0.7;
-
     private RightPanel rightPanel;
     private LeftPanel leftPanel;
 
     public MainAppPanel() {
+
+
         setOpaque(false);
-        leftPanel = new LeftPanel();
-        rightPanel = new RightPanel();
-
         setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-        setLeftComponent(leftPanel);
-        setRightComponent(rightPanel);
+
         setResizeWeight(SPLIT_RATIO);
+        setDividerSize(1);
         setContinuousLayout(true);
-        setDividerSize(8);
+        setEnabled(false);
+        setBorder(null);
 
     }
 
-    @Override
-    public void addNotify() {
-        super.addNotify();
-        this.setDividerLocation(SPLIT_RATIO);
+    public void setRightPanel(RightPanel rightPanel) {
+        setRightComponent(rightPanel);
     }
 
-    /**
-     * @return El panel de imagen (izquierdo).
-     */
-    public JPanel getImagePanel() {
-        return leftPanel;
+    public void setLeftPanel(LeftPanel leftPanel) {
+        setLeftComponent(leftPanel);
     }
 
-    /**
-     * @return El panel de controles (derecho).
-     */
-    public JPanel getControlPanel() {
-        return rightPanel;
-    }
+//    public RightPanel getRightPanel() {
+//        return rightPanel;
+//    }
+//
+//    public LeftPanel getLeftPanel() {
+//        return leftPanel;
+//    }
 }

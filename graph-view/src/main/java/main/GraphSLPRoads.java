@@ -1,6 +1,7 @@
 package main;
 
 import view.MainFrame;
+import view.viewControl.ViewControl;
 
 import javax.swing.*;
 
@@ -10,8 +11,9 @@ public class GraphSLPRoads {
             @Override
             public void run() {
                 MainFrame mainFrame = new MainFrame();
+                ViewControl viewControl = new ViewControl(mainFrame);
+
                 mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                mainFrame.setVisible(true);
                 mainFrame.setVisible(true);
             }
         });

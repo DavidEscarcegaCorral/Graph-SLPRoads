@@ -12,7 +12,7 @@ public class CustomRadioButton extends JRadioButton {
         super(text);
 
         setOpaque(false);
-        setForeground(Color.white);
+        setForeground(Color.BLACK);
         setFont(FontUtil.loadFont(15, "Inter_SemiBold"));
         setFocusPainted(false);
 
