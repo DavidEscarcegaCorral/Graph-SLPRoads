@@ -3,6 +3,7 @@ package view.panels;
 import algorithms.GraphAlgorithms;
 import graphs.Graphm;
 import interfaces.IGraph;
+import view.panels.leftPanels.GraphPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,8 +31,8 @@ public class MainPanel extends JPanel {
         myGraph.setEdge(0, 2, 10);
         myGraph.setEdge(1, 3, 10);
         myGraph.setEdge(2, 4, 10);
-        myGraph.setEdge(4, 1, 10); // Arista de 4 a 1
-        myGraph.setEdge(3, 0, 10); // Arista de 3 a 0
+        myGraph.setEdge(4, 1, 10);
+        myGraph.setEdge(3, 0, 10);
 
         graphPanel = new GraphPanel(myGraph);
 

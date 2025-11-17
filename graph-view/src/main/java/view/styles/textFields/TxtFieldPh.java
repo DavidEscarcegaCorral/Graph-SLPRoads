@@ -39,7 +39,7 @@ public class TxtFieldPh extends JTextField {
 
         setFont(FontUtil.loadFont(fontSize, "Inter_Regular"));
         setPreferredSize(new Dimension(width, height));
-        setBorder(new RoundBorder(5, Color.white));
+        setBorder(new RoundBorder(10, Color.white));
         setOpaque(false);
         if (limit > 0) {
             setDocument(new LimitDocument());
@@ -64,7 +64,6 @@ public class TxtFieldPh extends JTextField {
                 super.insertString(offset, str, attr);
             }
         }
-
     }
 
     public void verifyFocus() {
@@ -86,10 +85,15 @@ public class TxtFieldPh extends JTextField {
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setStroke(new BasicStroke(2));
 
+
+        g2d.setStroke(new BasicStroke(2));
         g2d.setColor(Color.WHITE);
-        g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+        g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.setColor(Color.BLACK);
+        g2d.drawRoundRect(3, 3, getWidth()-7, getHeight()-7, 8, 8);
+        g2d.setColor(Color.WHITE);
 
         if ((getText().isEmpty())) {
 
