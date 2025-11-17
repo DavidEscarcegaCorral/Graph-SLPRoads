@@ -10,6 +10,7 @@ import view.panels.rightPanels.RecorridoButtonsPanel;
 import view.panels.rightPanels.RightPanel;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 public class ViewControl {
     private MainFrame mainFrame;
@@ -24,6 +25,15 @@ public class ViewControl {
 
     public ViewControl(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+
+        initUI();
+        initListeners();
+    }
+
+    /**
+     * Se encarga de crear los paneles y organizarlos en el Frame.
+     */
+    private void initUI() {
         mainAppPanel = new MainAppPanel();
 
         // Panel Derecho
@@ -35,75 +45,107 @@ public class ViewControl {
         controlsPanel = new ControlsPanel();
         leftPanel = new LeftPanel(controlsPanel);
 
-        // Main App Panel
         mainAppPanel.setLeftPanel(leftPanel);
         mainAppPanel.setRightPanel(rightPanel);
-
-        // Main Frame
         mainFrame.setMainPanel(mainAppPanel);
+    }
 
-
-        // Manu de Algoritmos
-        menuButtonsPanel.getRecorridoBtn().addActionListener(e -> {
-            rightPanel.getSecondPanel().add(recorridoButtonsPanel);
-            rightPanel.getSecondPanel().revalidate();
-            rightPanel.getSecondPanel().repaint();
-        });
+    private void initListeners() {
+        // Menu de Algoritmos
+        menuButtonsPanel.getRecorridoBtn().addActionListener(this::mostrarMenuRecorrido);
 
         // Botón Reiniciar
-        controlsPanel.getRestartBtn().addActionListener(e -> {
-            leftPanel.getMapPanel().getGraphPanel().resetVisuals();
-            if (GraphAlgorithms.isPaused()) {
-                GraphAlgorithms.resumeAlgorithm();
-            }
-            controlsPanel.getPauseBtn().setText("Detener");
-            controlsPanel.getPauseBtn().setEnabled(false);
-            controlsPanel.getPauseBtn().setEnabled(true);
-        });
+        controlsPanel.getRestartBtn().addActionListener(e -> reiniciarSimulacion());
 
         // Botón Pausar/Reanudar
-        controlsPanel.getPauseBtn().addActionListener(e -> {
-            if (GraphAlgorithms.isPaused()) {
-                GraphAlgorithms.resumeAlgorithm();
-                controlsPanel.getPauseBtn().setText("Detener");
-            } else {
-                GraphAlgorithms.pauseAlgorithm();
-                controlsPanel.getPauseBtn().setText("Reanudar");
-            }
-        });
+        controlsPanel.getPauseBtn().addActionListener(e -> alternarPausa());
 
         // Botón Iniciar
-        controlsPanel.getPlayBtn().addActionListener(e -> {
-            try {
-                int startNode = Integer.parseInt(recorridoButtonsPanel.getTextField().getText());
-                // Agregar validacion para que este seleccionado un radioButton
-                // Agregar validacion para ciudades tmb
-                if (startNode < 0 || startNode >= leftPanel.getMapPanel().getGraph().vertexCount()) {
-                    JOptionPane.showMessageDialog(mainFrame, "Nodo invalido.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+        controlsPanel.getPlayBtn().addActionListener(e -> iniciarSimulacion());
 
-                controlsPanel.getPlayBtn().setEnabled(false);
-                controlsPanel.getRestartBtn().setEnabled(false);
-                controlsPanel.getPauseBtn().setEnabled(true);
-                controlsPanel.getPauseBtn().setText("Detener");
+    }
 
-                new Thread(() -> {
-                    GraphAlgorithms.runDFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
+    private void mostrarMenuRecorrido(ActionEvent e) {
+        rightPanel.getSecondPanel().add(recorridoButtonsPanel);
+        rightPanel.getSecondPanel().revalidate();
+        rightPanel.getSecondPanel().repaint();
+    }
 
-                    SwingUtilities.invokeLater(() -> {
-                        controlsPanel.getPlayBtn().setEnabled(true);
-                        controlsPanel.getRestartBtn().setEnabled(true);
-                        controlsPanel.getPauseBtn().setEnabled(false);
-                    });
-                }).start();
+    private void reiniciarSimulacion() {
+        // Resetear visuales
+        leftPanel.getMapPanel().getGraphPanel().resetVisuals();
 
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(mainFrame, "Por favor ingresa un numero.", "Error", JOptionPane.ERROR_MESSAGE);
+        // Asegurar que el algoritmo no esté pausado internamente
+        if (GraphAlgorithms.isPaused()) {
+            GraphAlgorithms.resumeAlgorithm();
+        }
+
+        // Resetear estado de botones
+        controlsPanel.getPauseBtn().setText("Detener");
+        controlsPanel.getPauseBtn().setEnabled(false);
+        controlsPanel.getPlayBtn().setEnabled(true);
+    }
+
+    private void alternarPausa() {
+        if (GraphAlgorithms.isPaused()) {
+            GraphAlgorithms.resumeAlgorithm();
+            controlsPanel.getPauseBtn().setText("Detener");
+        } else {
+            GraphAlgorithms.pauseAlgorithm();
+            controlsPanel.getPauseBtn().setText("Reanudar");
+        }
+    }
+
+    private void iniciarSimulacion() {
+        try {
+            String inputText = recorridoButtonsPanel.getTextField().getText();
+            int startNode = Integer.parseInt(inputText);
+
+            if (startNode < 0 || startNode >= leftPanel.getMapPanel().getGraph().vertexCount()) {
+                mostrarError("Nodo inválido: " + startNode);
+                return;
             }
+
+            //
+            // Validaciones pendientes (RadioButtons, Ciudades, etc.)
+            //
+
+            // Configurar botones antes de iniciar
+            controlsPanel.getPlayBtn().setEnabled(false);
+            controlsPanel.getRestartBtn().setEnabled(false);
+            controlsPanel.getPauseBtn().setEnabled(true);
+            controlsPanel.getPauseBtn().setText("Detener");
+
+            // Iniciar algoritmo en un hilo separado
+            new Thread(() -> ejecutarAlgoritmo(startNode)).start();
+
+        } catch (NumberFormatException ex) {
+            mostrarError("Por favor ingresa un número válido.");
+        }
+    }
+
+    /**
+     * Lógica que corre en el hilo secundario para no congelar la UI
+     */
+    private void ejecutarAlgoritmo(int startNode) {
+        // Agregar los demas Algoritmos aqui
+        GraphAlgorithms.runDFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
+
+        // Restaurar la UI
+        SwingUtilities.invokeLater(() -> {
+            controlsPanel.getPlayBtn().setEnabled(true);
+            controlsPanel.getRestartBtn().setEnabled(true);
+            controlsPanel.getPauseBtn().setEnabled(false);
+            mostrarMensaje("Recorrido completado.");
         });
+    }
 
+    private void mostrarError(String mensaje) {
+        JOptionPane.showMessageDialog(mainFrame, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
+    private void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(mainFrame, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }
 
 }
