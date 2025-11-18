@@ -4,10 +4,8 @@ import algorithms.GraphAlgorithms;
 import view.MainFrame;
 import view.panels.MainAppPanel;
 import view.panels.leftPanels.LeftPanel;
-import view.panels.rightPanels.ControlsPanel;
-import view.panels.rightPanels.MenuButtonsPanel;
-import view.panels.rightPanels.RecorridoButtonsPanel;
-import view.panels.rightPanels.RightPanel;
+import view.panels.leftPanels.ControlsPanel;
+import view.panels.rightPanels.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,10 +14,15 @@ public class ViewControl {
     private MainFrame mainFrame;
     private MainAppPanel mainAppPanel;
 
+    // Right Panel
     private RightPanel rightPanel;
-    private MenuButtonsPanel menuButtonsPanel;
-    private RecorridoButtonsPanel recorridoButtonsPanel;
+    private HeaderMenuPanel headerMenuPanel;
+    // Components
+    private HeaderComponent headerComponent;
+    private AlgotihmsMenuComponent algotihmsMenuComponent;
+    private TraversalAlgorithmsComponent traversalAlgorithmsComponent;
 
+    // Left Panel
     private LeftPanel leftPanel;
     private ControlsPanel controlsPanel;
 
@@ -37,9 +40,12 @@ public class ViewControl {
         mainAppPanel = new MainAppPanel();
 
         // Panel Derecho
-        menuButtonsPanel = new MenuButtonsPanel();
-        recorridoButtonsPanel = new RecorridoButtonsPanel();
-        rightPanel = new RightPanel(menuButtonsPanel);
+
+        headerComponent = new HeaderComponent();
+        algotihmsMenuComponent = new AlgotihmsMenuComponent();
+        headerMenuPanel = new HeaderMenuPanel(headerComponent, algotihmsMenuComponent);
+        traversalAlgorithmsComponent = new TraversalAlgorithmsComponent();
+        rightPanel = new RightPanel(headerMenuPanel);
 
         // Panel Izquierdo
         controlsPanel = new ControlsPanel();
@@ -52,7 +58,7 @@ public class ViewControl {
 
     private void initListeners() {
         // Menu de Algoritmos
-        menuButtonsPanel.getRecorridoBtn().addActionListener(this::mostrarMenuRecorrido);
+        algotihmsMenuComponent.getRecorridoBtn().addActionListener(this::mostrarMenuRecorrido);
 
         // Botón Reiniciar
         controlsPanel.getRestartBtn().addActionListener(e -> reiniciarSimulacion());
@@ -66,7 +72,7 @@ public class ViewControl {
     }
 
     private void mostrarMenuRecorrido(ActionEvent e) {
-        rightPanel.getSecondPanel().add(recorridoButtonsPanel);
+        rightPanel.getSecondPanel().add(traversalAlgorithmsComponent);
         rightPanel.getSecondPanel().revalidate();
         rightPanel.getSecondPanel().repaint();
     }
@@ -75,7 +81,7 @@ public class ViewControl {
         // Resetear visuales
         leftPanel.getMapPanel().getGraphPanel().resetVisuals();
 
-        // Asegurar que el algoritmo no esté pausado internamente
+        // Asegurar que el algoritmo no esté pausado
         if (GraphAlgorithms.isPaused()) {
             GraphAlgorithms.resumeAlgorithm();
         }
@@ -98,7 +104,7 @@ public class ViewControl {
 
     private void iniciarSimulacion() {
         try {
-            String inputText = recorridoButtonsPanel.getTextField().getText();
+            String inputText = traversalAlgorithmsComponent.getTextField().getText();
             int startNode = Integer.parseInt(inputText);
 
             if (startNode < 0 || startNode >= leftPanel.getMapPanel().getGraph().vertexCount()) {
@@ -136,7 +142,7 @@ public class ViewControl {
             controlsPanel.getPlayBtn().setEnabled(true);
             controlsPanel.getRestartBtn().setEnabled(true);
             controlsPanel.getPauseBtn().setEnabled(false);
-            mostrarMensaje("Recorrido completado.");
+            mostrarMensaje("Recorrido completado :D.");
         });
     }
 

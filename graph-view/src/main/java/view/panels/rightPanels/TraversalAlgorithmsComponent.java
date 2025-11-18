@@ -9,7 +9,7 @@ import view.styles.textFields.TxtFieldPh;
 import javax.swing.*;
 import java.awt.*;
 
-public class RecorridoButtonsPanel extends JPanel {
+public class TraversalAlgorithmsComponent extends JPanel {
     private ButtonGroup buttonGroup;
 
     private CustomRadioButton rbtn1;
@@ -21,7 +21,7 @@ public class RecorridoButtonsPanel extends JPanel {
     private TxtFieldPh textField;
     private Button citiesBtn;
 
-    public RecorridoButtonsPanel() {
+    public TraversalAlgorithmsComponent() {
         setOpaque(false);
         setPreferredSize(new Dimension(700, 340));
         setLayout(new FlowLayout(FlowLayout.CENTER, 8, 5));
@@ -48,6 +48,7 @@ public class RecorridoButtonsPanel extends JPanel {
         add(textField);
         add(citiesBtn);
         add(lbl2);
+
     }
 
     public CustomRadioButton getRbtn2() {
@@ -65,4 +66,6 @@ public class RecorridoButtonsPanel extends JPanel {
     public Button getCitiesBtn() {
         return citiesBtn;
     }
+
+
 }

@@ -55,6 +55,11 @@ public class Button extends JButton {
         });
     }
 
+    public void setNewFont(int fontSize, String font) {
+        setFont(FontUtil.loadFont(fontSize, font));
+
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();

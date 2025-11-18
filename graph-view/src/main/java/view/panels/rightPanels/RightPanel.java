@@ -1,30 +1,32 @@
 package view.panels.rightPanels;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class RightPanel extends JPanel {
     private JPanel firstPanel;
     private JPanel secondPanel;
     private JPanel thirdPanel;
-    private MenuButtonsPanel menuButtonsPanel;
-    private RecorridoButtonsPanel recorridoButtonsPanel;
+    private HeaderMenuPanel headerMenuPanel;
+    private AlgotihmsMenuComponent algotihmsMenuComponent;
 
-    public RightPanel(MenuButtonsPanel menuButtonsPanel) {
+    public RightPanel(HeaderMenuPanel headerMenuPanel) {
         setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        this.menuButtonsPanel = menuButtonsPanel;
+        this.headerMenuPanel = headerMenuPanel;
 
         firstPanel = new JPanel();
         firstPanel.setOpaque(false);
+//        firstPanel.setPreferredSize(new Dimension(850, 340));
         secondPanel = new JPanel();
         secondPanel.setOpaque(false);
+//        secondPanel.setPreferredSize(new Dimension(850, 340));
         thirdPanel = new JPanel();
         thirdPanel.setOpaque(false);
+//        thirdPanel.setPreferredSize(new Dimension(850, 340));
 
         // Añadir componetnes
-        firstPanel.add(menuButtonsPanel);
+        firstPanel.add(headerMenuPanel);
 
         add(firstPanel);
         add(secondPanel);
