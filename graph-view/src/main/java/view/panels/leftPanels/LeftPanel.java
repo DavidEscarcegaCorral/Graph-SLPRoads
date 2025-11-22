@@ -8,7 +8,6 @@ public class LeftPanel extends JPanel {
 
     public LeftPanel(ControlsPanel controlsPanel) {
         setOpaque(false);
-//        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         mapPanel = new MapPanel();
 

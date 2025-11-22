@@ -32,10 +32,4 @@ public class MainAppPanel extends JSplitPane {
         leftPanel.setMinimumSize(new Dimension(0, 0));
         setLeftComponent(leftPanel);
     }
-
-//    @Override
-//    public void addNotify() {
-//        super.addNotify();
-//        setDividerLocation(SPLIT_RATIO);
-//    }
 }

@@ -15,9 +15,13 @@ public class ControlsPanel extends JPanel {
         setOpaque(false);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
 
-        playBtn = new Button("Iniciar ►", 150, 40, 20, 12, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
-        pauseBtn = new Button("Detener", 120, 40, 20, 12, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
-        restartBtn = new Button("Reiniciar", 120, 40, 20, 12, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        Font newFont = new Font(Font.DIALOG, Font.BOLD, 32);
+
+        playBtn = new Button("► \n Iniciar ", 150, 65, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        pauseBtn = new Button("⏸", 70, 55, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        pauseBtn.setFont(newFont);
+        restartBtn = new Button("↻", 70, 55, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        restartBtn.setFont(newFont);
 
         add(pauseBtn);
         add(playBtn);

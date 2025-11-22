@@ -1,4 +1,4 @@
-package view.panels.rightPanels;
+package view.panels.rightPanels.header;
 
 import view.styles.FontUtil;
 

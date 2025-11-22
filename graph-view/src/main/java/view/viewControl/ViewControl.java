@@ -6,6 +6,11 @@ import view.panels.MainAppPanel;
 import view.panels.leftPanels.LeftPanel;
 import view.panels.leftPanels.ControlsPanel;
 import view.panels.rightPanels.*;
+import view.panels.rightPanels.header.HeaderComponent;
+import view.panels.rightPanels.header.HeaderMenuPanel;
+import view.panels.rightPanels.header.OptionsMenuComponent;
+import view.panels.rightPanels.mst.MSTMenuComponent;
+import view.panels.rightPanels.searchAlgorithms.SearchlAlgorithmsComponent;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,10 +22,12 @@ public class ViewControl {
     // Right Panel
     private RightPanel rightPanel;
     private HeaderMenuPanel headerMenuPanel;
+
     // Components
     private HeaderComponent headerComponent;
     private OptionsMenuComponent optionsMenuComponent;
     private SearchlAlgorithmsComponent searchlAlgorithmsComponent;
+    private MSTMenuComponent mstMenuComponent;
 
     // Left Panel
     private LeftPanel leftPanel;
@@ -40,11 +47,13 @@ public class ViewControl {
         mainAppPanel = new MainAppPanel();
 
         // Panel Derecho
-
         headerComponent = new HeaderComponent();
         optionsMenuComponent = new OptionsMenuComponent();
         headerMenuPanel = new HeaderMenuPanel(headerComponent, optionsMenuComponent);
+
         searchlAlgorithmsComponent = new SearchlAlgorithmsComponent();
+        mstMenuComponent = new MSTMenuComponent();
+
         rightPanel = new RightPanel(headerMenuPanel);
 
         // Panel Izquierdo
@@ -58,7 +67,12 @@ public class ViewControl {
 
     private void initListeners() {
         // Menu de Algoritmos
-        optionsMenuComponent.getRecorridoBtn().addActionListener(this::mostrarMenuRecorrido);
+        optionsMenuComponent.getRecorridoBtn().addActionListener(e ->
+                mostrarMenu(e, 1));
+
+        // Menu de MST
+        optionsMenuComponent.getMstBtn().addActionListener(e ->
+                mostrarMenu(e, 2));
 
         // Botón Reiniciar
         controlsPanel.getRestartBtn().addActionListener(e -> reiniciarSimulacion());
@@ -71,8 +85,17 @@ public class ViewControl {
 
     }
 
-    private void mostrarMenuRecorrido(ActionEvent e) {
-        rightPanel.getSecondPanel().add(searchlAlgorithmsComponent);
+    private void mostrarMenu(ActionEvent e, int option) {
+        rightPanel.getSecondPanel().removeAll();
+        switch (option) {
+            case 1:
+                rightPanel.getSecondPanel().add(searchlAlgorithmsComponent);
+                break;
+            case 2:
+                rightPanel.getSecondPanel().add(mstMenuComponent);
+                break;
+
+        }
         rightPanel.getSecondPanel().revalidate();
         rightPanel.getSecondPanel().repaint();
     }
@@ -87,7 +110,7 @@ public class ViewControl {
         }
 
         // Resetear estado de botones
-        controlsPanel.getPauseBtn().setText("Detener");
+        controlsPanel.getPauseBtn().setText("⏸");
         controlsPanel.getPauseBtn().setEnabled(false);
         controlsPanel.getPlayBtn().setEnabled(true);
     }
@@ -95,10 +118,10 @@ public class ViewControl {
     private void alternarPausa() {
         if (GraphAlgorithms.isPaused()) {
             GraphAlgorithms.resumeAlgorithm();
-            controlsPanel.getPauseBtn().setText("Detener");
+            controlsPanel.getPauseBtn().setText("⏸");
         } else {
             GraphAlgorithms.pauseAlgorithm();
-            controlsPanel.getPauseBtn().setText("Reanudar");
+            controlsPanel.getPauseBtn().setText("►");
         }
     }
 
@@ -112,7 +135,6 @@ public class ViewControl {
                 return;
             }
 
-
             // Validaciones pendientes (RadioButtons, Ciudades, etc.)
             boolean esBFS = searchlAlgorithmsComponent.isBFSSelected();
 
@@ -120,7 +142,7 @@ public class ViewControl {
             controlsPanel.getPlayBtn().setEnabled(false);
             controlsPanel.getRestartBtn().setEnabled(false);
             controlsPanel.getPauseBtn().setEnabled(true);
-            controlsPanel.getPauseBtn().setText("Detener");
+            controlsPanel.getPauseBtn().setText("⏸");
 
             // Iniciar algoritmo en un hilo separado
             new Thread(() -> ejecutarAlgoritmo(startNode, esBFS)).start();
@@ -134,6 +156,7 @@ public class ViewControl {
      * Metodo para correr el algoritmo en un hilo secundario
      */
     private void ejecutarAlgoritmo(int startNode, boolean esBFS) {
+
 
         if (esBFS) {
             GraphAlgorithms.runBFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);

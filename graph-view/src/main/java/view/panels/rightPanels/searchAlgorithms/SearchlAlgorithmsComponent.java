@@ -1,4 +1,4 @@
-package view.panels.rightPanels;
+package view.panels.rightPanels.searchAlgorithms;
 
 import view.styles.Button;
 import view.styles.Colors;
@@ -21,10 +21,35 @@ public class SearchlAlgorithmsComponent extends JPanel {
     private TxtFieldPh textField;
     private Button citiesBtn;
 
+    private JPanel p1;
+    private JPanel p2;
+    private JPanel p3;
+    private JPanel p4;
+
     public SearchlAlgorithmsComponent() {
         setOpaque(false);
         setPreferredSize(new Dimension(700, 340));
-        setLayout(new FlowLayout(FlowLayout.CENTER, 8, 5));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p1.setOpaque(false);
+        p1.setMaximumSize(new Dimension(700, 50));
+        p1.setBorder(BorderFactory.createEmptyBorder(5, 4, 5, 5));
+
+        p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p2.setOpaque(false);
+        p2.setMaximumSize(new Dimension(700, 50));
+        p2.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
+
+        p3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p3.setOpaque(false);
+        p3.setMaximumSize(new Dimension(700, 60));
+        p3.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 5));
+
+        p4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p4.setOpaque(false);
+        p4.setMaximumSize(new Dimension(700, 50));
+        p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
         rbtn1 = new CustomRadioButton("En anchura (BFS)");
         rbtn2 = new CustomRadioButton("En profundidad (DFS)");
@@ -43,12 +68,20 @@ public class SearchlAlgorithmsComponent extends JPanel {
         textField = new TxtFieldPh("Ciudad o No. de nodo", 220, 40, 16);
         citiesBtn = new Button("Ver ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
-        add(rbtn1);
-        add(rbtn2);
-        add(lbl1);
-        add(textField);
-        add(citiesBtn);
-        add(lbl2);
+        p1.add(rbtn1);
+        p1.add(rbtn2);
+
+        p2.add(lbl1);
+
+        p3.add(textField);
+        p3.add(citiesBtn);
+
+        p4.add(lbl2);
+
+        add(p1);
+        add(p2);
+        add(p3);
+        add(p4);
 
     }
 
