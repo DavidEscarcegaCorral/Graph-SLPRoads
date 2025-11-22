@@ -7,7 +7,7 @@ public class RightPanel extends JPanel {
     private JPanel secondPanel;
     private JPanel thirdPanel;
     private HeaderMenuPanel headerMenuPanel;
-    private AlgotihmsMenuComponent algotihmsMenuComponent;
+    private OptionsMenuComponent optionsMenuComponent;
 
     public RightPanel(HeaderMenuPanel headerMenuPanel) {
         setOpaque(false);
@@ -17,13 +17,10 @@ public class RightPanel extends JPanel {
 
         firstPanel = new JPanel();
         firstPanel.setOpaque(false);
-//        firstPanel.setPreferredSize(new Dimension(850, 340));
         secondPanel = new JPanel();
         secondPanel.setOpaque(false);
-//        secondPanel.setPreferredSize(new Dimension(850, 340));
         thirdPanel = new JPanel();
         thirdPanel.setOpaque(false);
-//        thirdPanel.setPreferredSize(new Dimension(850, 340));
 
         // Añadir componetnes
         firstPanel.add(headerMenuPanel);

@@ -5,12 +5,12 @@ import interfaces.IGraph;
 /**
  * Implementación pública de la interfaz IGraph usando una Matriz de Adyacencia.
  */
-public class Graphm implements IGraph {
+public class GraphM implements IGraph {
     private int[][] matrix;
     private int edgeCounter;
     public int[] markArray;
 
-    public Graphm(int n) {
+    public GraphM(int n) {
         init(n);
     }
 

@@ -1,6 +1,6 @@
 package view.panels.leftPanels;
 
-import graphs.Graphm;
+import graphs.GraphM;
 import interfaces.IGraph;
 
 import javax.imageio.ImageIO;
@@ -24,7 +24,9 @@ public class MapPanel extends JPanel {
      */
     public MapPanel() {
         setOpaque(true);
-        graph = new Graphm(5);
+        setPreferredSize(new Dimension(800, 600));
+
+        graph = new GraphM(5);
         graph.setEdge(0, 1, 10);
         graph.setEdge(0, 2, 10);
         graph.setEdge(1, 3, 10);

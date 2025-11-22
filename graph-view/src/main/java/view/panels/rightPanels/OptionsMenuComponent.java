@@ -6,12 +6,12 @@ import view.styles.Colors;
 import javax.swing.*;
 import java.awt.*;
 
-public class AlgotihmsMenuComponent extends JPanel {
+public class OptionsMenuComponent extends JPanel {
     private Button recorridoBtn;
     private Button mstBtn;
     private Button rutaCortaBtn;
 
-    public AlgotihmsMenuComponent() {
+    public OptionsMenuComponent() {
         setOpaque(false);
         setLayout(new FlowLayout(FlowLayout.LEFT, 8, 5));
 

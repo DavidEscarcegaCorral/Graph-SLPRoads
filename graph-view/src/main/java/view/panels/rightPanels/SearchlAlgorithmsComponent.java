@@ -9,7 +9,7 @@ import view.styles.textFields.TxtFieldPh;
 import javax.swing.*;
 import java.awt.*;
 
-public class TraversalAlgorithmsComponent extends JPanel {
+public class SearchlAlgorithmsComponent extends JPanel {
     private ButtonGroup buttonGroup;
 
     private CustomRadioButton rbtn1;
@@ -21,13 +21,14 @@ public class TraversalAlgorithmsComponent extends JPanel {
     private TxtFieldPh textField;
     private Button citiesBtn;
 
-    public TraversalAlgorithmsComponent() {
+    public SearchlAlgorithmsComponent() {
         setOpaque(false);
         setPreferredSize(new Dimension(700, 340));
         setLayout(new FlowLayout(FlowLayout.CENTER, 8, 5));
 
         rbtn1 = new CustomRadioButton("En anchura (BFS)");
         rbtn2 = new CustomRadioButton("En profundidad (DFS)");
+
         buttonGroup = new ButtonGroup();
         buttonGroup.add(rbtn1);
         buttonGroup.add(rbtn2);
@@ -65,6 +66,14 @@ public class TraversalAlgorithmsComponent extends JPanel {
 
     public Button getCitiesBtn() {
         return citiesBtn;
+    }
+
+    public boolean isBFSSelected() {
+        return rbtn1.isSelected();
+    }
+
+    public boolean isDFSSelected() {
+        return rbtn2.isSelected();
     }
 
 

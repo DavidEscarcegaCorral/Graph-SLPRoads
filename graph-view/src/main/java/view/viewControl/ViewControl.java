@@ -19,8 +19,8 @@ public class ViewControl {
     private HeaderMenuPanel headerMenuPanel;
     // Components
     private HeaderComponent headerComponent;
-    private AlgotihmsMenuComponent algotihmsMenuComponent;
-    private TraversalAlgorithmsComponent traversalAlgorithmsComponent;
+    private OptionsMenuComponent optionsMenuComponent;
+    private SearchlAlgorithmsComponent searchlAlgorithmsComponent;
 
     // Left Panel
     private LeftPanel leftPanel;
@@ -42,9 +42,9 @@ public class ViewControl {
         // Panel Derecho
 
         headerComponent = new HeaderComponent();
-        algotihmsMenuComponent = new AlgotihmsMenuComponent();
-        headerMenuPanel = new HeaderMenuPanel(headerComponent, algotihmsMenuComponent);
-        traversalAlgorithmsComponent = new TraversalAlgorithmsComponent();
+        optionsMenuComponent = new OptionsMenuComponent();
+        headerMenuPanel = new HeaderMenuPanel(headerComponent, optionsMenuComponent);
+        searchlAlgorithmsComponent = new SearchlAlgorithmsComponent();
         rightPanel = new RightPanel(headerMenuPanel);
 
         // Panel Izquierdo
@@ -58,7 +58,7 @@ public class ViewControl {
 
     private void initListeners() {
         // Menu de Algoritmos
-        algotihmsMenuComponent.getRecorridoBtn().addActionListener(this::mostrarMenuRecorrido);
+        optionsMenuComponent.getRecorridoBtn().addActionListener(this::mostrarMenuRecorrido);
 
         // Botón Reiniciar
         controlsPanel.getRestartBtn().addActionListener(e -> reiniciarSimulacion());
@@ -72,7 +72,7 @@ public class ViewControl {
     }
 
     private void mostrarMenuRecorrido(ActionEvent e) {
-        rightPanel.getSecondPanel().add(traversalAlgorithmsComponent);
+        rightPanel.getSecondPanel().add(searchlAlgorithmsComponent);
         rightPanel.getSecondPanel().revalidate();
         rightPanel.getSecondPanel().repaint();
     }
@@ -104,7 +104,7 @@ public class ViewControl {
 
     private void iniciarSimulacion() {
         try {
-            String inputText = traversalAlgorithmsComponent.getTextField().getText();
+            String inputText = searchlAlgorithmsComponent.getTextField().getText();
             int startNode = Integer.parseInt(inputText);
 
             if (startNode < 0 || startNode >= leftPanel.getMapPanel().getGraph().vertexCount()) {
@@ -112,9 +112,9 @@ public class ViewControl {
                 return;
             }
 
-            //
+
             // Validaciones pendientes (RadioButtons, Ciudades, etc.)
-            //
+            boolean esBFS = searchlAlgorithmsComponent.isBFSSelected();
 
             // Configurar botones antes de iniciar
             controlsPanel.getPlayBtn().setEnabled(false);
@@ -123,7 +123,7 @@ public class ViewControl {
             controlsPanel.getPauseBtn().setText("Detener");
 
             // Iniciar algoritmo en un hilo separado
-            new Thread(() -> ejecutarAlgoritmo(startNode)).start();
+            new Thread(() -> ejecutarAlgoritmo(startNode, esBFS)).start();
 
         } catch (NumberFormatException ex) {
             mostrarError("Por favor ingresa un número válido.");
@@ -131,13 +131,16 @@ public class ViewControl {
     }
 
     /**
-     * Lógica que corre en el hilo secundario para no congelar la UI
+     * Metodo para correr el algoritmo en un hilo secundario
      */
-    private void ejecutarAlgoritmo(int startNode) {
-        // Agregar los demas Algoritmos aqui
-        GraphAlgorithms.runDFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
+    private void ejecutarAlgoritmo(int startNode, boolean esBFS) {
 
-        // Restaurar la UI
+        if (esBFS) {
+            GraphAlgorithms.runBFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
+        } else {
+            GraphAlgorithms.runDFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
+        }
+
         SwingUtilities.invokeLater(() -> {
             controlsPanel.getPlayBtn().setEnabled(true);
             controlsPanel.getRestartBtn().setEnabled(true);
