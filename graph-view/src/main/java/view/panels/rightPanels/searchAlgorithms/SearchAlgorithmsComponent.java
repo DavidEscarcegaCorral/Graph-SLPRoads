@@ -9,7 +9,7 @@ import view.styles.textFields.TxtFieldPh;
 import javax.swing.*;
 import java.awt.*;
 
-public class SearchlAlgorithmsComponent extends JPanel {
+public class SearchAlgorithmsComponent extends JPanel {
     private final ButtonGroup buttonGroup;
 
     private final CustomRadioButton rbtn1;
@@ -26,7 +26,7 @@ public class SearchlAlgorithmsComponent extends JPanel {
     private final JPanel p3;
     private final JPanel p4;
 
-    public SearchlAlgorithmsComponent() {
+    public SearchAlgorithmsComponent() {
         setOpaque(false);
         setPreferredSize(new Dimension(700, 340));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
