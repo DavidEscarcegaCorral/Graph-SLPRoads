@@ -17,7 +17,7 @@ public class ControlsPanel extends JPanel {
 
         Font newFont = new Font(Font.DIALOG, Font.BOLD, 32);
 
-        playBtn = new Button("► \n Iniciar ", 150, 65, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        playBtn = new Button("▶ \n Iniciar ", 150, 65, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
         pauseBtn = new Button("⏸", 70, 55, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
         pauseBtn.setFont(newFont);
         restartBtn = new Button("↻", 70, 55, 20, 22, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);

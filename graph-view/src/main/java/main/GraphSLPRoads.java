@@ -1,7 +1,7 @@
 package main;
 
 import view.MainFrame;
-import view.viewControl.ViewControl;
+import view.control.ViewControl;
 
 import javax.swing.*;
 

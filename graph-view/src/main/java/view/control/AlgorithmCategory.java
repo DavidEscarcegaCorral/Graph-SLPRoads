@@ -1,4 +1,4 @@
-package view.viewControl;
+package view.control;
 
 public enum AlgorithmCategory {
     SEARCH,
