@@ -1,9 +1,6 @@
 package view.panels.leftPanels;
 
-import view.panels.rightPanels.ControlsPanel;
-
 import javax.swing.*;
-import java.awt.*;
 
 public class LeftPanel extends JPanel {
     private MapPanel mapPanel;
@@ -15,6 +12,7 @@ public class LeftPanel extends JPanel {
         mapPanel = new MapPanel();
 
         add(mapPanel);
+        add(Box.createVerticalStrut(50));
         add(controlsPanel);
     }
 
