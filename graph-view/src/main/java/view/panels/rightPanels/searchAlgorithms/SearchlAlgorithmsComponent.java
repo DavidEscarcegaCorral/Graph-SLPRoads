@@ -10,31 +10,31 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SearchlAlgorithmsComponent extends JPanel {
-    private ButtonGroup buttonGroup;
+    private final ButtonGroup buttonGroup;
 
-    private CustomRadioButton rbtn1;
-    private CustomRadioButton rbtn2;
+    private final CustomRadioButton rbtn1;
+    private final CustomRadioButton rbtn2;
 
-    private JLabel lbl1;
-    private JLabel lbl2;
+    private final JLabel lbl1;
+    private final JLabel lbl2;
 
-    private TxtFieldPh textField;
-    private Button citiesBtn;
+    private final TxtFieldPh textField;
+    private final Button citiesBtn;
 
-    private JPanel p1;
-    private JPanel p2;
-    private JPanel p3;
-    private JPanel p4;
+    private final JPanel p1;
+    private final JPanel p2;
+    private final JPanel p3;
+    private final JPanel p4;
 
     public SearchlAlgorithmsComponent() {
         setOpaque(false);
         setPreferredSize(new Dimension(700, 340));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 5));
         p1.setOpaque(false);
         p1.setMaximumSize(new Dimension(700, 50));
-        p1.setBorder(BorderFactory.createEmptyBorder(5, 4, 5, 5));
+//        p1.setBorder(BorderFactory.createEmptyBorder(5, 4, 5, 5));
 
         p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p2.setOpaque(false);

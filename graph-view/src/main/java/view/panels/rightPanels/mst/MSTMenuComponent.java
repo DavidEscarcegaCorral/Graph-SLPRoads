@@ -32,10 +32,10 @@ public class MSTMenuComponent extends JPanel {
         setPreferredSize(new Dimension(700, 340));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 5));
         p1.setOpaque(false);
         p1.setMaximumSize(new Dimension(700, 50));
-        p1.setBorder(BorderFactory.createEmptyBorder(5, 4, 5, 5));
+//        p1.setBorder(BorderFactory.createEmptyBorder(5, 4, 5, 5));
 
         p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p2.setOpaque(false);
@@ -108,5 +108,17 @@ public class MSTMenuComponent extends JPanel {
 
     public Button getCitiesBtn() {
         return citiesBtn;
+    }
+
+    public boolean isKruskalSelected() {
+        return rbtn1.isSelected();
+    }
+
+    public boolean isPrimSelected() {
+        return rbtn2.isSelected();
+    }
+
+    public boolean isBoruvkaSelected() {
+        return rbtn3.isSelected();
     }
 }

@@ -1,8 +1,10 @@
 package view.viewControl;
 
 import algorithms.GraphAlgorithms;
+import interfaces.IGraph;
 import view.MainFrame;
 import view.panels.MainAppPanel;
+import view.panels.leftPanels.GraphPanel;
 import view.panels.leftPanels.LeftPanel;
 import view.panels.leftPanels.ControlsPanel;
 import view.panels.rightPanels.*;
@@ -13,6 +15,7 @@ import view.panels.rightPanels.mst.MSTMenuComponent;
 import view.panels.rightPanels.searchAlgorithms.SearchlAlgorithmsComponent;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class ViewControl {
@@ -26,18 +29,67 @@ public class ViewControl {
     // Components
     private HeaderComponent headerComponent;
     private OptionsMenuComponent optionsMenuComponent;
-    private SearchlAlgorithmsComponent searchlAlgorithmsComponent;
+    private SearchlAlgorithmsComponent searchAlgorithmsComponent;
     private MSTMenuComponent mstMenuComponent;
 
     // Left Panel
     private LeftPanel leftPanel;
     private ControlsPanel controlsPanel;
 
+    private AlgorithmCategory currentCategory;
+
     public ViewControl(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
         initUI();
         initListeners();
+        showWelcomeView();
+    }
+
+    private void showWelcomeView() {
+        this.currentCategory = null; // Ensure state is null
+
+        JPanel container = rightPanel.getSecondPanel();
+        container.removeAll();
+
+        JLabel welcomeLabel = new JLabel("<html><div style='text-align: center;'>"
+                + "<h2>Bienvenido al sistema de visualizador de grafos</h2>"
+                + "<p>Por favor seleccione una cateogria<br>del menu para iniciar.</p>"
+                + "</div></html>");
+        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        container.add(welcomeLabel, BorderLayout.CENTER);
+
+        controlsPanel.getPlayBtn().setEnabled(false);
+        controlsPanel.getPauseBtn().setEnabled(false);
+        controlsPanel.getRestartBtn().setEnabled(false);
+
+        container.revalidate();
+        container.repaint();
+    }
+
+    private void switchView(AlgorithmCategory newCategory) {
+        this.currentCategory = newCategory;
+        JPanel container = rightPanel.getSecondPanel();
+        container.removeAll();
+
+        switch (newCategory) {
+            case SEARCH:
+                container.add(searchAlgorithmsComponent);
+
+                break;
+            case MST:
+                container.add(mstMenuComponent);
+
+                break;
+
+        }
+
+        controlsPanel.getPlayBtn().setEnabled(true);
+        controlsPanel.getRestartBtn().setEnabled(true);
+
+        container.revalidate();
+        container.repaint();
     }
 
     /**
@@ -51,7 +103,7 @@ public class ViewControl {
         optionsMenuComponent = new OptionsMenuComponent();
         headerMenuPanel = new HeaderMenuPanel(headerComponent, optionsMenuComponent);
 
-        searchlAlgorithmsComponent = new SearchlAlgorithmsComponent();
+        searchAlgorithmsComponent = new SearchlAlgorithmsComponent();
         mstMenuComponent = new MSTMenuComponent();
 
         rightPanel = new RightPanel(headerMenuPanel);
@@ -89,7 +141,7 @@ public class ViewControl {
         rightPanel.getSecondPanel().removeAll();
         switch (option) {
             case 1:
-                rightPanel.getSecondPanel().add(searchlAlgorithmsComponent);
+                rightPanel.getSecondPanel().add(searchAlgorithmsComponent);
                 break;
             case 2:
                 rightPanel.getSecondPanel().add(mstMenuComponent);
@@ -126,42 +178,66 @@ public class ViewControl {
     }
 
     private void iniciarSimulacion() {
-        try {
-            String inputText = searchlAlgorithmsComponent.getTextField().getText();
-            int startNode = Integer.parseInt(inputText);
+        SearchlAlgorithmsComponent buttonsSearchAl = searchAlgorithmsComponent;
+        MSTMenuComponent buttonsMST = mstMenuComponent;
+        GraphPanel panel = leftPanel.getMapPanel().getGraphPanel();
+        IGraph graph = panel.getGraph();
 
-            if (startNode < 0 || startNode >= leftPanel.getMapPanel().getGraph().vertexCount()) {
-                mostrarError("Nodo inválido: " + startNode);
+        int startNode = 0;
+        boolean necesitaNodoInicio = buttonsSearchAl.isDFSSelected() || buttonsSearchAl.isBFSSelected() || buttonsMST.isPrimSelected();
+
+        if (necesitaNodoInicio) {
+            try {
+                String text = buttonsSearchAl.getTextField().getText();
+                if (text.isEmpty()) {
+                    mostrarError("Por favor ingresa un nodo de inicio.");
+                    return;
+                }
+                startNode = Integer.parseInt(text);
+
+                if (startNode < 0 || startNode >= graph.vertexCount()) {
+                    mostrarError("Nodo inválido. Rango permitido: 0 a " + (graph.vertexCount() - 1));
+                    return;
+                }
+
+            } catch (NumberFormatException ex) {
+                mostrarError("Por favor ingresa un número entero válido.");
                 return;
             }
-
-            // Validaciones pendientes (RadioButtons, Ciudades, etc.)
-            boolean esBFS = searchlAlgorithmsComponent.isBFSSelected();
-
-            // Configurar botones antes de iniciar
-            controlsPanel.getPlayBtn().setEnabled(false);
-            controlsPanel.getRestartBtn().setEnabled(false);
-            controlsPanel.getPauseBtn().setEnabled(true);
-            controlsPanel.getPauseBtn().setText("⏸");
-
-            // Iniciar algoritmo en un hilo separado
-            new Thread(() -> ejecutarAlgoritmo(startNode, esBFS)).start();
-
-        } catch (NumberFormatException ex) {
-            mostrarError("Por favor ingresa un número válido.");
         }
+
+        controlsPanel.getPlayBtn().setEnabled(false);
+        controlsPanel.getRestartBtn().setEnabled(false);
+        controlsPanel.getPauseBtn().setEnabled(true);
+        controlsPanel.getPauseBtn().setText("⏸");
+
+        final int finalStartNode = startNode;
+
+        new Thread(() -> ejecutarAlgoritmo(finalStartNode)).start();
     }
 
     /**
      * Metodo para correr el algoritmo en un hilo secundario
      */
-    private void ejecutarAlgoritmo(int startNode, boolean esBFS) {
+    private void ejecutarAlgoritmo(int startNode) {
+        SearchlAlgorithmsComponent buttonsSearchAl = searchAlgorithmsComponent;
+        MSTMenuComponent buttonsMST = mstMenuComponent;
+        GraphPanel panel = leftPanel.getMapPanel().getGraphPanel();
 
+        if (buttonsSearchAl.isBFSSelected()) {
+            GraphAlgorithms.runBFSFromNode(panel, startNode);
 
-        if (esBFS) {
-            GraphAlgorithms.runBFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
-        } else {
-            GraphAlgorithms.runDFSFromNode(leftPanel.getMapPanel().getGraphPanel(), startNode);
+        } else if (buttonsSearchAl.isDFSSelected()) {
+            GraphAlgorithms.runDFSFromNode(panel, startNode);
+
+        } else if (buttonsMST.isKruskalSelected()) {
+            GraphAlgorithms.runKruskal(panel);
+
+        }else if(buttonsMST.isPrimSelected()){
+            GraphAlgorithms.runPrim(panel, startNode);
+
+        }else if(buttonsMST.isBoruvkaSelected()){
+
         }
 
         SwingUtilities.invokeLater(() -> {
