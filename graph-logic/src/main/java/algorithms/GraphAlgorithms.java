@@ -255,6 +255,68 @@ public class GraphAlgorithms {
         return mstWeight;
     }
 
+    public static int runDijkstra(IVisualizer visual, int startNode, int endNode) {
+        if (isPaused)
+            resumeAlgorithm();
+
+        IGraph graph = visual.getGraph();
+        int n = graph.vertexCount();
+
+//        resetVisualsForPath(visual, graph);
+        visual.pauseAndRedraw("Iniciando Dijkstra desde " + startNode + " hasta " + endNode, 1000);
+
+        int[] dist = new int[n];
+        int[] parent = new int[n];
+        boolean[] visited = new boolean[n];
+
+        for (int i = 0; i < n; i++) {
+            dist[i] = Integer.MAX_VALUE;
+            parent[i] = -1;
+        }
+        dist[startNode] = 0;
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
+        pq.add(new int[]{startNode, 0});
+
+        System.out.println("\n--- TABLA DE DISTANCIAS (DIJKSTRA) ---");
+
+        while (!pq.isEmpty()) {
+            int[] current = pq.poll();
+            int u = current[0];
+
+            if (visited[u]) continue;
+            visited[u] = true;
+
+            graph.setMark(u, BLACK);
+            visual.pauseAndRedraw("Procesando nodo " + u + ". Distancia actual: " + dist[u], 500);
+            checkPause();
+
+
+            if (u == endNode) break;
+
+
+            for (int v = graph.firstNeighbor(u); v < n; v = graph.nextNeighbor(u, v)) {
+                int weight = graph.weight(u, v);
+
+                // Relajación
+                if (!visited[v] && dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                    parent[v] = u;
+                    pq.add(new int[]{v, dist[v]});
+
+                    graph.setMark(v, GRAY);
+                    visual.markEdge(u, v, true); // Pintar azul temporalmente
+                    visual.pauseAndRedraw("Actualizando distancia a " + v + " : " + dist[v], 300);
+                    checkPause();
+                }
+            }
+//            printDistanceTable(dist);
+        }
+
+//        highlightPath(visual, parent, endNode);
+        return dist[endNode];
+    }
+
     private static void addEdgesToPQ(IGraph graph, int u, PriorityQueue<EdgeContext> pq, boolean[] inMST) {
         for (int v = graph.firstNeighbor(u); v < graph.vertexCount(); v = graph.nextNeighbor(u, v)) {
             if (!inMST[v]) {
