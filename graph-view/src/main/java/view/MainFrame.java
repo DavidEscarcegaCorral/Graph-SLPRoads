@@ -17,7 +17,6 @@ public class MainFrame extends JFrame {
         getContentPane().setBackground(Color.white);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
     }
 
     public void setMainPanel(MainAppPanel mainAppPanel) {
