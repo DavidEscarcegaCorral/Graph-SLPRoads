@@ -21,6 +21,7 @@ public class SearchAlgorithmsComponent extends JPanel {
     private final TxtFieldPh textField;
     private final Button citiesBtn;
 
+    private JPanel titlePanel;
     private final JPanel p1;
     private final JPanel p2;
     private final JPanel p3;
@@ -31,10 +32,14 @@ public class SearchAlgorithmsComponent extends JPanel {
         setPreferredSize(new Dimension(700, 340));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+        titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        titlePanel.setOpaque(false);
+        titlePanel.setMaximumSize(new Dimension(700, 50));
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
         p1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 5));
         p1.setOpaque(false);
         p1.setMaximumSize(new Dimension(700, 50));
-//        p1.setBorder(BorderFactory.createEmptyBorder(5, 4, 5, 5));
 
         p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p2.setOpaque(false);
@@ -50,6 +55,10 @@ public class SearchAlgorithmsComponent extends JPanel {
         p4.setOpaque(false);
         p4.setMaximumSize(new Dimension(700, 50));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
+
+        JLabel titleLbL = new JLabel("Recorrido del grafo");
+        titleLbL.setFont(FontUtil.loadFont(20, "Inter_SemiBold"));
+        titleLbL.setForeground(Colors.COLOR_BUTTON);
 
         rbtn1 = new CustomRadioButton("En anchura (BFS)");
         rbtn2 = new CustomRadioButton("En profundidad (DFS)");
@@ -68,16 +77,15 @@ public class SearchAlgorithmsComponent extends JPanel {
         textField = new TxtFieldPh("Ciudad o No. de nodo", 220, 40, 16);
         citiesBtn = new Button("Ver ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
+        titlePanel.add(titleLbL);
         p1.add(rbtn1);
         p1.add(rbtn2);
-
         p2.add(lbl1);
-
         p3.add(textField);
         p3.add(citiesBtn);
-
         p4.add(lbl2);
 
+        add(titlePanel);
         add(p1);
         add(p2);
         add(p3);
