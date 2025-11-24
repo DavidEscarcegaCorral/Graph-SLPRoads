@@ -10,6 +10,7 @@ import view.panels.rightPanels.header.HeaderMenuPanel;
 import view.panels.rightPanels.header.OptionsMenuComponent;
 import view.panels.rightPanels.mst.MSTMenuComponent;
 import view.panels.rightPanels.searchAlgorithms.SearchAlgorithmsComponent;
+import view.panels.rightPanels.shortestPath.ShortestPathComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,18 +28,19 @@ public class ViewControl {
     private OptionsMenuComponent optionsMenuComponent;
     private SearchAlgorithmsComponent searchAlgorithmsComponent;
     private MSTMenuComponent mstMenuComponent;
+    private ShortestPathComponent shortestPathComponent;
 
     // Left Panel
     private LeftPanel leftPanel;
     private ControlsPanel controlsPanel;
 
     private AlgorithmCategory currentCategory;
-    private AlgorithmControl algorithmControl;
+    private AlgorithmsControl algorithmsControl;
 
     public ViewControl(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initUI();
-        this.algorithmControl = new AlgorithmControl(
+        this.algorithmsControl = new AlgorithmsControl(
                 mainFrame,
                 leftPanel.getMapPanel().getGraphPanel(),
                 controlsPanel,
@@ -60,6 +62,7 @@ public class ViewControl {
 
         searchAlgorithmsComponent = new SearchAlgorithmsComponent();
         mstMenuComponent = new MSTMenuComponent();
+        shortestPathComponent = new ShortestPathComponent();
 
         rightPanel = new RightPanel(headerMenuPanel);
 
@@ -75,19 +78,22 @@ public class ViewControl {
     private void initListeners() {
         optionsMenuComponent.getRecorridoBtn().addActionListener(e -> switchView(AlgorithmCategory.SEARCH));
         optionsMenuComponent.getMstBtn().addActionListener(e -> switchView(AlgorithmCategory.MST));
+        optionsMenuComponent.getRutaCortaBtn().addActionListener(e -> {
+            switchView(AlgorithmCategory.SHORTEST_PATH);
+        });
 
         controlsPanel.getPlayBtn().addActionListener(e ->
-                algorithmControl.startSimulation(currentCategory)
+                algorithmsControl.startSimulation(currentCategory)
         );
 
         // Botón Reiniciar
         controlsPanel.getRestartBtn().addActionListener(e ->
-                algorithmControl.onRestart()
+                algorithmsControl.onRestart()
         );
 
         // Botón Pausa
         controlsPanel.getPauseBtn().addActionListener(e ->
-                algorithmControl.onTogglePause()
+                algorithmsControl.onTogglePause()
         );
     }
 
@@ -96,7 +102,7 @@ public class ViewControl {
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
 
-        JLabel welcomeLabel = new JLabel("<html><center><h2>Bienvenido</h2><p>Seleccione una opción.</p></center></html>");
+        JLabel welcomeLabel = new JLabel("<html><center><h2>Bienvenido al Visualizador</h2><p>Por favor seleccione una categoría de algoritmo<br>en el menú para comenzar..</p></center></html>");
         welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         container.add(welcomeLabel, BorderLayout.CENTER);
 
@@ -121,6 +127,7 @@ public class ViewControl {
                 container.add(mstMenuComponent);
                 break;
             case SHORTEST_PATH:
+                container.add(shortestPathComponent);
                 break;
 
         }

@@ -162,14 +162,13 @@ public class GraphAlgorithms {
         }
     }
 
-    public static void runKruskal(IVisualizer visual) {
+    public static int runKruskal(IVisualizer visual) {
         if (isPaused) resumeAlgorithm();
         IGraph graph = visual.getGraph();
 
         resetForMST(visual, graph);
         visual.pauseAndRedraw("Iniciando Kruskal. Obteniendo todas las aristas...", 1000);
 
-        //Obtener todas las aristas y ordenarlas
         List<EdgeContext> allEdges = new ArrayList<>();
         for (int i = 0; i < graph.vertexCount(); i++) {
             for (int j = i + 1; j < graph.vertexCount(); j++) {
@@ -180,21 +179,17 @@ public class GraphAlgorithms {
         }
         Collections.sort(allEdges);
 
-        // Inicializar Union-Find
         UnionFind uf = new UnionFind(graph.vertexCount());
         int mstWeight = 0;
         int edgesCount = 0;
         List<String> selectedEdges = new ArrayList<>();
 
-        // Procesar aristas
         for (EdgeContext edge : allEdges) {
             visual.pauseAndRedraw("Analizando arista: " + edge, 500);
             checkPause();
 
-            // Intentar unir los conjuntos
             if (uf.union(edge.source, edge.dest)) {
 
-                // Si se unen (no crean ciclo) se añaden
                 visual.markEdge(edge.source, edge.dest, true);
                 graph.setMark(edge.source, BLACK);
                 graph.setMark(edge.dest, BLACK);
@@ -203,36 +198,35 @@ public class GraphAlgorithms {
                 edgesCount++;
                 selectedEdges.add(edge.toString());
 
-                visual.pauseAndRedraw("¡Arista seleccionada! (Peso acumulado: " + mstWeight + ")", 800);
+                visual.pauseAndRedraw("Arista agregada (Peso acumulado: " + mstWeight + ")", 800);
             } else {
                 visual.pauseAndRedraw("Arista descartada (crea ciclo): " + edge, 200);
             }
         }
 
-        System.out.println("=== KRUSKAL FINALIZADO ===");
+        System.out.println("FINALIZADO");
         System.out.println("Peso Total: " + mstWeight);
         System.out.println("Aristas: " + selectedEdges);
         visual.pauseAndRedraw("Kruskal Terminado. Peso Total: " + mstWeight, 0);
 
+        return mstWeight;
+
     }
 
-    public static void runPrim(IVisualizer visual, int startNode) {
+    public static int runPrim(IVisualizer visual, int startNode) {
         if (isPaused) resumeAlgorithm();
         IGraph graph = visual.getGraph();
 
         resetForMST(visual, graph);
         visual.pauseAndRedraw("Iniciando Prim desde nodo: " + startNode, 1000);
 
-        // Elegir la arista menos costosa
         PriorityQueue<EdgeContext> pq = new PriorityQueue<>();
 
-        // Arreglo para saber quien esta en el mst
         boolean[] inMST = new boolean[graph.vertexCount()];
 
         int mstWeight = 0;
         List<String> selectedEdges = new ArrayList<>();
 
-        // Agregar nodo inicial
         inMST[startNode] = true;
         graph.setMark(startNode, BLACK);
         addEdgesToPQ(graph, startNode, pq, inMST);
@@ -246,19 +240,19 @@ public class GraphAlgorithms {
             mstWeight += edge.weight;
             selectedEdges.add(edge.toString());
 
-            // Visualización
             graph.setMark(edge.dest, BLACK);
             visual.markEdge(edge.source, edge.dest, true);
             visual.pauseAndRedraw("Agregando nodo " + edge.dest + " vía arista peso " + edge.weight, 800);
             checkPause();
 
-            // Añadir vecinos del nuevo nodo
             addEdgesToPQ(graph, edge.dest, pq, inMST);
         }
 
-        System.out.println("=== PRIM FINALIZADO ===");
+        System.out.println("FINALIZADO");
         System.out.println("Peso Total: " + mstWeight);
         visual.pauseAndRedraw("Prim Terminado. Peso Total: " + mstWeight, 0);
+
+        return mstWeight;
     }
 
     private static void addEdgesToPQ(IGraph graph, int u, PriorityQueue<EdgeContext> pq, boolean[] inMST) {

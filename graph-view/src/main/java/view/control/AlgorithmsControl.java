@@ -9,7 +9,7 @@ import view.panels.rightPanels.searchAlgorithms.SearchAlgorithmsComponent;
 
 import javax.swing.*;
 
-public class AlgorithmControl {
+public class AlgorithmsControl {
     private MainFrame mainFrame;
     private GraphPanel graphPanel;
     private ControlsPanel controlsPanel;
@@ -17,11 +17,11 @@ public class AlgorithmControl {
     private SearchAlgorithmsComponent searchPanel;
     private MSTMenuComponent mstPanel;
 
-    public AlgorithmControl(MainFrame mainFrame,
-                               GraphPanel graphPanel,
-                               ControlsPanel controlsPanel,
-                               SearchAlgorithmsComponent searchPanel,
-                               MSTMenuComponent mstPanel) {
+    public AlgorithmsControl(MainFrame mainFrame,
+                             GraphPanel graphPanel,
+                             ControlsPanel controlsPanel,
+                             SearchAlgorithmsComponent searchPanel,
+                             MSTMenuComponent mstPanel) {
         this.mainFrame = mainFrame;
         this.graphPanel = graphPanel;
         this.controlsPanel = controlsPanel;
@@ -51,6 +51,7 @@ public class AlgorithmControl {
      * Inicia la simulación basada en la categoría actual que le pasa el ViewControl.
      */
     public void startSimulation(AlgorithmCategory currentCategory) {
+        // Validaciones
         if (currentCategory == null) {
             JOptionPane.showMessageDialog(mainFrame,
                     "Por favor seleccione una categoría del menú primero.",
@@ -82,10 +83,21 @@ public class AlgorithmControl {
         controlsPanel.getPauseBtn().setEnabled(true);
         controlsPanel.getPauseBtn().setText("⏹");
 
+        mstPanel.setWeight(-1);
+
+        // Correr los hilos
         final int finalNode = startNode;
         new Thread(() -> {
             try {
-                runLogic(currentCategory, finalNode);
+                int finalWeight = runLogic(currentCategory, finalNode);
+                System.out.println("DEBUG CONTROLADOR: El algoritmo retornó peso = " + finalWeight);
+
+                if (currentCategory == AlgorithmCategory.MST) {
+                    SwingUtilities.invokeLater(() -> {
+                        System.out.println("DEBUG CONTROLADOR: Enviando a la vista...");
+                        mstPanel.setWeight(finalWeight);
+                    });
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 SwingUtilities.invokeLater(() ->
@@ -97,7 +109,9 @@ public class AlgorithmControl {
         }).start();
     }
 
-    private void runLogic(AlgorithmCategory category, int startNode) {
+    private int runLogic(AlgorithmCategory category, int startNode) {
+        int resultWeight = -1;
+
         switch (category) {
             case SEARCH:
                 if (searchPanel.isBFSSelected()) GraphAlgorithms.runBFSFromNode(graphPanel, startNode);
@@ -105,11 +119,16 @@ public class AlgorithmControl {
                 break;
 
             case MST:
-                if (mstPanel.isKruskalSelected()) GraphAlgorithms.runKruskal(graphPanel);
-                else if (mstPanel.isPrimSelected()) GraphAlgorithms.runPrim(graphPanel, startNode);
-                else if (mstPanel.isBoruvkaSelected()) JOptionPane.showMessageDialog(mainFrame, "Aun no implementado srry.");;
+                if (mstPanel.isKruskalSelected()) {
+                    resultWeight = GraphAlgorithms.runKruskal(graphPanel);
+                } else if (mstPanel.isPrimSelected()) {
+                    resultWeight = GraphAlgorithms.runPrim(graphPanel, startNode);
+                } else if (mstPanel.isBoruvkaSelected()) {
+                    JOptionPane.showMessageDialog(mainFrame, "Aun no implementado sory.");
+                }
                 break;
         }
+        return resultWeight;
     }
 
     private int validateAndGetStartNode(JTextField field) {
