@@ -5,7 +5,12 @@ import interfaces.IGraph;
 import java.util.LinkedList;
 
 /**
- * Implementación del Grafo usando Lista de Adyacencia (GraphL).
+ * Implementación de {@link IGraph} mediante lista de adyacencia.
+ *
+ * Características:
+ * - Almacena para cada vértice una lista de aristas salientes ({@link graphs.Edge}).
+ * - Iteración de vecinos eficiente en grafos dispersos; consultas de peso son O(grado(v)).
+ * - Puede representar grafos dirigidos; para no dirigidos, insertar aristas en ambos sentidos.
  */
 public class GraphL implements IGraph {
     private LinkedList<Edge>[] adjacencylist;

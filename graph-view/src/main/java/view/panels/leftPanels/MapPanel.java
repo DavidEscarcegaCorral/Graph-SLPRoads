@@ -26,13 +26,36 @@ public class MapPanel extends JPanel {
         setOpaque(true);
         setPreferredSize(new Dimension(800, 600));
 
-        graph = new GraphM(5);
-        graph.setEdge(0, 1, 10);
-        graph.setEdge(0, 2, 10);
-        graph.setEdge(1, 3, 10);
-        graph.setEdge(2, 4, 10);
-        graph.setEdge(4, 1, 10);
-        graph.setEdge(3, 0, 10);
+        graph = new GraphM(22);
+        graph.setEdge(0, 1, 192);
+
+        graph.setEdge(0, 4, 77);
+
+        graph.setEdge(1, 15, 8);
+
+        graph.setEdge(3, 2, 103);
+
+        graph.setEdge(6, 7, 97);
+
+        graph.setEdge(8, 5, 55);
+
+        graph.setEdge(8, 18, 57);
+
+        graph.setEdge(9, 10, 8);
+
+        graph.setEdge(11, 12, 8);
+
+        graph.setEdge(13, 14, 8);
+
+        graph.setEdge(16, 3, 8);
+
+        graph.setEdge(16, 17, 8);
+
+        graph.setEdge(19, 20, 8);
+
+        graph.setEdge(21, 22, 8);
+
+
 
         graphPanel = new GraphPanel(graph);
 

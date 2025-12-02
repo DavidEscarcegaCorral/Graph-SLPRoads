@@ -31,7 +31,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
         // Posiciones de los fokin nodos
         int nodeCount = graph.vertexCount();
-        if (nodeCount > 0) positions[0] = new Point(100, 225);
+        if (nodeCount > 0) positions[0] = new Point(200, 225);
         if (nodeCount > 1) positions[1] = new Point(300, 100);
         if (nodeCount > 2) positions[2] = new Point(300, 350);
         if (nodeCount > 3) positions[3] = new Point(500, 100);
@@ -82,9 +82,6 @@ public class GraphPanel extends JPanel implements IVisualizer {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(new BasicStroke(2));
 
-        final int ARROW_SIZE = 15;
-        final double ARROW_ANGLE = Math.toRadians(20);
-
         for (int source = 0; source < graph.vertexCount(); source++) {
             for (int destination = 0; destination < graph.vertexCount(); destination++) {
 
@@ -108,15 +105,6 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
                     g2.drawLine(x1, y1, tipX, tipY);
 
-                    double angle1 = angle + Math.PI + ARROW_ANGLE;
-                    double angle2 = angle + Math.PI - ARROW_ANGLE;
-                    int x_wing1 = (int) (tipX + ARROW_SIZE * Math.cos(angle1));
-                    int y_wing1 = (int) (tipY + ARROW_SIZE * Math.sin(angle1));
-                    int x_wing2 = (int) (tipX + ARROW_SIZE * Math.cos(angle2));
-                    int y_wing2 = (int) (tipY + ARROW_SIZE * Math.sin(angle2));
-
-                    g2.drawLine(tipX, tipY, x_wing1, y_wing1);
-                    g2.drawLine(tipX, tipY, x_wing2, y_wing2);
                 }
             }
         }
