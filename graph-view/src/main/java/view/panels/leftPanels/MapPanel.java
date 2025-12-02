@@ -13,7 +13,7 @@ import java.io.IOException;
  * escalándola para que cubra el componente.
  */
 public class MapPanel extends JPanel {
-    private static final String IMAGE_PATH = "/img/SLP_Img.jpg";
+    private static final String IMAGE_PATH = "/img/mapa-estado-san-luis-potosi-low-detail.png";
     private Image backgroundImage;
 
     private IGraph graph;
@@ -26,34 +26,48 @@ public class MapPanel extends JPanel {
         setOpaque(true);
         setPreferredSize(new Dimension(800, 600));
 
-        graph = new GraphM(22);
+        graph = new GraphM(23);
         graph.setEdge(0, 1, 192);
+        graph.setEdge(1, 0, 192);
 
         graph.setEdge(0, 4, 77);
+        graph.setEdge(4, 0, 77);
 
         graph.setEdge(1, 15, 8);
+        graph.setEdge(15, 1, 8);
 
         graph.setEdge(3, 2, 103);
+        graph.setEdge(2, 3, 103);
 
         graph.setEdge(6, 7, 97);
+        graph.setEdge(7, 6, 97);
 
         graph.setEdge(8, 5, 55);
+        graph.setEdge(5, 8, 55);
 
         graph.setEdge(8, 18, 57);
+        graph.setEdge(18, 8, 57);
 
         graph.setEdge(9, 10, 8);
+        graph.setEdge(10, 9, 8);
 
         graph.setEdge(11, 12, 8);
+        graph.setEdge(12, 11, 8);
 
         graph.setEdge(13, 14, 8);
+        graph.setEdge(14, 13, 8);
 
         graph.setEdge(16, 3, 8);
+        graph.setEdge(3, 16, 8);
 
         graph.setEdge(16, 17, 8);
+        graph.setEdge(17, 16, 8);
 
         graph.setEdge(19, 20, 8);
+        graph.setEdge(20, 19, 8);
 
         graph.setEdge(21, 22, 8);
+        graph.setEdge(22, 21, 8);
 
 
 
@@ -86,12 +100,24 @@ public class MapPanel extends JPanel {
     /**
      * Sobrescribe el metodo paintComponent para dibujar la imagen de fondo.
      */
+    /**
+     * Sobrescribe el metodo paintComponent para dibujar la imagen de fondo.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            int targetWidth = getWidth();
+            int targetHeight = getHeight();
+
+            Image scaledImage = backgroundImage.getScaledInstance(
+                    targetWidth,
+                    targetHeight,
+                    Image.SCALE_SMOOTH
+            );
+
+            g.drawImage(scaledImage, 0, 0, this);
         }
     }
 
