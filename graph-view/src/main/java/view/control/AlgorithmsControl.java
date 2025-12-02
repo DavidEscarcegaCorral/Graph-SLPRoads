@@ -6,9 +6,22 @@ import view.panels.leftPanels.ControlsPanel;
 import view.panels.leftPanels.GraphPanel;
 import view.panels.rightPanels.mst.MSTMenuComponent;
 import view.panels.rightPanels.searchAlgorithms.SearchAlgorithmsComponent;
+import view.panels.rightPanels.shortestPath.ShortestPathComponent;
 
 import javax.swing.*;
 
+/**
+ * Controlador principal que coordina la ejecución de algoritmos desde la capa de vista.
+ *
+ * Responsabilidades:
+ * - Valida entradas de la UI y enruta a los algoritmos correspondientes (búsqueda, MST, caminos).
+ * - Gestiona el estado de los botones (play/pausa/reinicio) y muestra resultados (p. ej., peso de MST).
+ * - Ejecuta la lógica en un hilo en segundo plano y actualiza la UI de forma segura mediante SwingUtilities.
+ *
+ * Concurrencia:
+ * - Los algoritmos se ejecutan en un hilo aparte; toda actualización de UI se programa en la EDT.
+ * - Usa los métodos estáticos de GraphAlgorithms para pausa/reanudación.
+ */
 public class AlgorithmsControl {
     private MainFrame mainFrame;
     private GraphPanel graphPanel;
@@ -16,17 +29,20 @@ public class AlgorithmsControl {
 
     private SearchAlgorithmsComponent searchPanel;
     private MSTMenuComponent mstPanel;
+    private ShortestPathComponent shortestPathPanel;
 
     public AlgorithmsControl(MainFrame mainFrame,
                              GraphPanel graphPanel,
                              ControlsPanel controlsPanel,
                              SearchAlgorithmsComponent searchPanel,
-                             MSTMenuComponent mstPanel) {
+                             MSTMenuComponent mstPanel,
+                             ShortestPathComponent shortestPathaPanel) {
         this.mainFrame = mainFrame;
         this.graphPanel = graphPanel;
         this.controlsPanel = controlsPanel;
         this.searchPanel = searchPanel;
         this.mstPanel = mstPanel;
+        this.shortestPathPanel = shortestPathaPanel;
     }
 
     public void onRestart() {
@@ -125,6 +141,11 @@ public class AlgorithmsControl {
                     resultWeight = GraphAlgorithms.runPrim(graphPanel, startNode);
                 } else if (mstPanel.isBoruvkaSelected()) {
                     JOptionPane.showMessageDialog(mainFrame, "Aun no implementado sory.");
+                }
+                break;
+            case SHORTEST_PATH:
+                if(shortestPathPanel.isBellmanFordSelected()){
+
                 }
                 break;
         }

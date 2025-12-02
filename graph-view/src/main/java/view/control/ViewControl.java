@@ -45,7 +45,8 @@ public class ViewControl {
                 leftPanel.getMapPanel().getGraphPanel(),
                 controlsPanel,
                 searchAlgorithmsComponent,
-                mstMenuComponent
+                mstMenuComponent,
+                shortestPathComponent
         );
 
         initListeners();

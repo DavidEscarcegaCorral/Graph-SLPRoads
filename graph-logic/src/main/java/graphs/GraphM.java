@@ -3,13 +3,22 @@ package graphs;
 import interfaces.IGraph;
 
 /**
- * Implementación pública de la interfaz IGraph usando una Matriz de Adyacencia.
+ * Implementación de {@link IGraph} mediante matriz de adyacencia.
+ *
+ * Características:
+ * - Acceso O(1) para {@link #isEdge(int, int)} y {@link #weight(int, int)}.
+ * - Coste O(V) para iterar vecinos con {@link #firstNeighbor(int)} / {@link #nextNeighbor(int, int)}.
+ * - Adecuado para grafos densos; para grafos dispersos considerar {@link graphs.GraphL}.
  */
 public class GraphM implements IGraph {
     private int[][] matrix;
     private int edgeCounter;
     public int[] markArray;
 
+    /**
+     * Crea un grafo con n vértices y sin aristas.
+     * @param n número de vértices (>0)
+     */
     public GraphM(int n) {
         init(n);
     }

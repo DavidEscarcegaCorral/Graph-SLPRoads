@@ -8,8 +8,21 @@ import interfaces.IVisualizer;
 import java.util.*;
 
 /**
- * Clase pública de utilidad que contiene los algoritmos de recorrido.
- * Solo opera sobre las interfaces IGraph e IVisualizer.
+ * Utilidades estáticas para ejecutar y visualizar algoritmos de grafos.
+ *
+ * Alcance y dependencias:
+ * - Opera exclusivamente sobre las interfaces {@link interfaces.IGraph} e {@link interfaces.IVisualizer}.
+ * - La comunicación con la capa de vista se realiza mediante {@link IVisualizer#pauseAndRedraw(String, int)}
+ *   y métodos de marcado de nodos/aristas.
+ *
+ * Control de ejecución:
+ * - Soporta pausa/reanudación con un candado interno; las actualizaciones de UI deben ocurrir en la EDT.
+ * - Los métodos no gestionan hilos por sí mismos; se espera que la capa de control los ejecute en un hilo de fondo.
+ *
+ * Algoritmos implementados:
+ * - DFS y BFS de recorrido.
+ * - MST: Kruskal y Prim.
+ * - Camino más corto: Dijkstra (parcial: sin resaltado final del camino en este momento).
  */
 public class GraphAlgorithms {
 
@@ -21,7 +34,8 @@ public class GraphAlgorithms {
     private static final Object lock = new Object();
 
     /**
-     * Revisa si el algoritmo está actualmente en pausa.
+     * Indica si el algoritmo está actualmente en pausa.
+     * @return true si se ha solicitado pausa; false en caso contrario
      */
     public static boolean isPaused() {
         return isPaused;
@@ -45,7 +59,9 @@ public class GraphAlgorithms {
     }
 
     /**
-     * Revisa si el algoritmo debe pausarse.
+     * Punto de cooperación para la pausa de los algoritmos.
+     * Si la bandera interna está en pausa, espera en un monitor hasta reanudación.
+     * Debe llamarse periódicamente dentro de los bucles de los algoritmos.
      */
     private static void checkPause() {
         try {
@@ -63,9 +79,9 @@ public class GraphAlgorithms {
 
     /**
      * Inicia un recorrido DFS desde un nodo específico.
-     *
-     * @param visual    El objeto de la GUI que implementa IVisualizer.
-     * @param startNode El vértice donde comenzará el recorrido.
+     * Prepara marcas y visuales y delega la recursión en {@link #DFS(IVisualizer, int)}.
+     * @param visual vista que implementa {@link IVisualizer}
+     * @param startNode nodo de inicio (0..V-1)
      */
     public static void runDFSFromNode(IVisualizer visual, int startNode) {
         if (isPaused) resumeAlgorithm();
@@ -114,6 +130,12 @@ public class GraphAlgorithms {
         checkPause();
     }
 
+    /**
+     * Inicia un recorrido BFS desde un nodo específico.
+     * Prepara marcas y visuales y delega la iteración en {@link #BFS(IVisualizer, int)}.
+     * @param visual vista que implementa {@link IVisualizer}
+     * @param startNode nodo de inicio (0..V-1)
+     */
     public static void runBFSFromNode(IVisualizer visual, int startNode) {
         if (isPaused) resumeAlgorithm();
 
@@ -162,6 +184,22 @@ public class GraphAlgorithms {
         }
     }
 
+    /**
+     * Ejecuta el algoritmo de Kruskal para obtener un Árbol de Expansión Mínima (MST).
+     *
+     * Requisitos y notas:
+     * - Se asume grafo no dirigido y ponderado (si es no dirigido, debe existir simetría i->j y j->i).
+     * - El algoritmo recorre todas las aristas, las ordena por peso y selecciona aquellas que no forman ciclo
+     *   usando {@link algorithms.mst.UnionFind}.
+     * - Devuelve el peso total del MST construido (o del bosque, si el grafo está desconectado).
+     *
+     * Complejidad: O(E log E), dominada por el ordenamiento de aristas.
+     *
+     * Efectos de UI: resetea visuales, marca aristas seleccionadas y muestra mensajes de progreso.
+     *
+     * @param visual vista que implementa {@link IVisualizer}
+     * @return peso total del MST resultante
+     */
     public static int runKruskal(IVisualizer visual) {
         if (isPaused) resumeAlgorithm();
         IGraph graph = visual.getGraph();
@@ -262,7 +300,7 @@ public class GraphAlgorithms {
         IGraph graph = visual.getGraph();
         int n = graph.vertexCount();
 
-//        resetVisualsForPath(visual, graph);
+        resetVisualsForPath(visual, graph);
         visual.pauseAndRedraw("Iniciando Dijkstra desde " + startNode + " hasta " + endNode, 1000);
 
         int[] dist = new int[n];
@@ -305,7 +343,7 @@ public class GraphAlgorithms {
                     pq.add(new int[]{v, dist[v]});
 
                     graph.setMark(v, GRAY);
-                    visual.markEdge(u, v, true); // Pintar azul temporalmente
+                    visual.markEdge(u, v, true);
                     visual.pauseAndRedraw("Actualizando distancia a " + v + " : " + dist[v], 300);
                     checkPause();
                 }
@@ -329,6 +367,11 @@ public class GraphAlgorithms {
         for (int v = 0; v < graph.vertexCount(); v++) {
             graph.setMark(v, WHITE);
         }
+        visual.resetVisuals();
+    }
+
+    private static void resetVisualsForPath(IVisualizer visual, IGraph graph) {
+        for (int v = 0; v < graph.vertexCount(); v++) graph.setMark(v, WHITE);
         visual.resetVisuals();
     }
 
