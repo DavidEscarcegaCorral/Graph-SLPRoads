@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewControl {
-    private MainFrame mainFrame;
+    private final MainFrame mainFrame;
     private MainAppPanel mainAppPanel;
 
     // Right Panel
@@ -35,7 +35,7 @@ public class ViewControl {
     private ControlsPanel controlsPanel;
 
     private AlgorithmCategory currentCategory;
-    private AlgorithmsControl algorithmsControl;
+    private final AlgorithmsControl algorithmsControl;
 
     public ViewControl(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
