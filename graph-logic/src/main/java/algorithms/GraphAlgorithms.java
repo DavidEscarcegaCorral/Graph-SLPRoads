@@ -260,11 +260,12 @@ public class GraphAlgorithms {
         IGraph graph = visual.getGraph();
 
         resetForMST(visual, graph);
-        visual.pauseAndRedraw("Iniciando Boruvka...", 1000);
+        visual.pauseAndRedraw("Iniciando Boruvka (MST Global)...", 1000);
 
         int n = graph.vertexCount();
         UnionFind uf = new UnionFind(n);
 
+        // 1. Recolectar todas las aristas
         List<EdgeContext> allEdges = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
@@ -277,13 +278,18 @@ public class GraphAlgorithms {
         int mstWeight = 0;
         int components = n;
         List<String> selectedEdges = new ArrayList<>();
+        int iteration = 1;
 
         while (components > 1) {
+            System.out.println("Iteración Boruvka " + iteration );
+            visual.pauseAndRedraw("Iteración " + iteration + " (Componentes: " + components + ") ---", 800);
+
             EdgeContext[] cheapest = new EdgeContext[n];
 
             for (EdgeContext e : allEdges) {
                 int setU = uf.find(e.source);
                 int setV = uf.find(e.dest);
+
                 if (setU == setV) continue;
 
                 if (cheapest[setU] == null || e.weight < cheapest[setU].weight) {
@@ -295,39 +301,41 @@ public class GraphAlgorithms {
             }
 
             boolean anyMerged = false;
-
             for (int i = 0; i < n; i++) {
                 EdgeContext e = cheapest[i];
                 if (e == null) continue;
-                visual.pauseAndRedraw("Mejor arista para comp. " + i + ": " + e, 400);
-                checkPause();
 
-                if (uf.union(e.source, e.dest)) {
-                    anyMerged = true;
-                    mstWeight += e.weight;
-                    components--;
-                    selectedEdges.add(e.toString());
+                int setU = uf.find(e.source);
+                int setV = uf.find(e.dest);
 
-                    graph.setMark(e.source, BLACK);
-                    graph.setMark(e.dest, BLACK);
-                    visual.markEdge(e.source, e.dest, true);
+                if (setU != setV) {
+                    if (uf.union(e.source, e.dest)) {
+                        anyMerged = true;
+                        mstWeight += e.weight;
+                        components--;
+                        selectedEdges.add(e.toString());
 
-                    visual.pauseAndRedraw("Arista agregada (Peso acumulado: " + mstWeight + ")", 800);
-                    checkPause();
-                } else {
-                    visual.pauseAndRedraw("Arista descartada (misma componente): " + e, 200);
-                    checkPause();
+                        graph.setMark(e.source, BLACK);
+                        graph.setMark(e.dest, BLACK);
+                        visual.markEdge(e.source, e.dest, true);
+
+                        visual.pauseAndRedraw("Agregando arista [" + e.source + "-" + e.dest + "] (Peso: " + e.weight + ")", 500);
+                        checkPause();
+
+                        System.out.println("Uniendo componentes con arista: " + e);
+                    }
                 }
             }
+
             if (!anyMerged) {
-                visual.pauseAndRedraw("No se pudieron unir más componentes. Grafo posiblemente desconectado.", 500);
+                visual.pauseAndRedraw("No se pueden unir más componentes. Fin.", 500);
                 break;
             }
+            iteration++;
         }
 
         System.out.println("FINALIZADO BORUVKA");
         System.out.println("Peso Total: " + mstWeight);
-        System.out.println("Aristas seleccionadas: " + selectedEdges);
         visual.pauseAndRedraw("Boruvka Terminado. Peso Total: " + mstWeight, 0);
 
         return mstWeight;
