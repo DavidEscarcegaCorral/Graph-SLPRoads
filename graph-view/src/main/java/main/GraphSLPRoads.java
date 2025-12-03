@@ -12,7 +12,6 @@ public class GraphSLPRoads {
             public void run() {
                 MainFrame mainFrame = new MainFrame();
                 ViewControl viewControl = new ViewControl(mainFrame);
-
                 mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 mainFrame.setVisible(true);
             }

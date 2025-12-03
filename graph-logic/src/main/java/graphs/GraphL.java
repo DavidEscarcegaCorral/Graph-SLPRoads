@@ -49,7 +49,7 @@ public class GraphL implements IGraph {
 
     @Override
     public int firstNeighbor(int v) {
-        if (adjacencylist[v].size() == 0) {
+        if (adjacencylist[v].isEmpty()) {
             return numVertex;
         }
         return adjacencylist[v].get(0).getVert();

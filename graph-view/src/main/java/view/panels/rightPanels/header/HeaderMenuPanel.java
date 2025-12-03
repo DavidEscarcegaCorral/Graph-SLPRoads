@@ -5,8 +5,8 @@ import view.styles.FontUtil;
 import javax.swing.*;
 
 public class HeaderMenuPanel extends JPanel {
-    private HeaderComponent headerPanel;
-    private OptionsMenuComponent optionsMenuComponent;
+    private final HeaderComponent headerPanel;
+    private final OptionsMenuComponent optionsMenuComponent;
     private JLabel lbl1;
 
     public HeaderMenuPanel(HeaderComponent header, OptionsMenuComponent algotihmsMenu) {
