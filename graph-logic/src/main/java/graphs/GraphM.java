@@ -34,15 +34,17 @@ public class GraphM implements IGraph {
     @Override
     public int firstNeighbor(int v) {
         for (int i = 0; i < markArray.length; i++)
-            if (matrix[v][i] != 0) return i;
-        return markArray.length;
+            if (matrix[v][i] != 0)
+                return i;
+        return -1;
     }
 
     @Override
     public int nextNeighbor(int v, int after) {
         for (int i = after + 1; i < markArray.length; i++)
-            if (matrix[v][i] != 0) return i;
-        return markArray.length;
+            if (matrix[v][i] != 0)
+                return i;
+        return -1;
     }
 
     @Override
@@ -67,7 +69,9 @@ public class GraphM implements IGraph {
 
     @Override
     public int weight(int i, int j) {
-        if (matrix[i][j] == 0) return 0;
+        if (i < 0 || j < 0 || i >= matrix.length || j >= matrix.length)
+            return Integer.MAX_VALUE;
+
         return matrix[i][j];
     }
 

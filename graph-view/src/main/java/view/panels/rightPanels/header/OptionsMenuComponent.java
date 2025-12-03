@@ -7,9 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class OptionsMenuComponent extends JPanel {
-    private Button recorridoBtn;
-    private Button mstBtn;
-    private Button rutaCortaBtn;
+    private final Button recorridoBtn;
+    private final Button mstBtn;
+    private final Button rutaCortaBtn;
 
     public OptionsMenuComponent() {
         setOpaque(false);
