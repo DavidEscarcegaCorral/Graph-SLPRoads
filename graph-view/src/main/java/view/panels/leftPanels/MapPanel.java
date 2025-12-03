@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Un JPanel personalizado que dibuja una imagen de fondo fija,
@@ -16,8 +17,45 @@ public class MapPanel extends JPanel {
     private static final String IMAGE_PATH = "/img/mapa-estado-san-luis-potosi-low-detail.png";
     private Image backgroundImage;
 
-    private IGraph graph;
-    private GraphPanel graphPanel;
+    private final IGraph graph;
+    private final GraphPanel graphPanel;
+
+    // Lista estática y estructurada de aristas del grafo
+    private static final EdgeDef[] EDGES = new EdgeDef[] {
+            new EdgeDef(0, 1, 192), new EdgeDef(1, 0, 192),
+            new EdgeDef(0, 19, 192), new EdgeDef(19, 0, 192),
+            new EdgeDef(0, 22, 192), new EdgeDef(22, 0, 192),
+            new EdgeDef(0, 4, 77), new EdgeDef(4, 0, 77),
+            new EdgeDef(22, 11, 77), new EdgeDef(11, 22, 77),
+            new EdgeDef(11, 12, 77), new EdgeDef(12, 11, 77),
+            new EdgeDef(11, 1, 77), new EdgeDef(1, 11, 77),
+            new EdgeDef(1, 10, 77), new EdgeDef(10, 1, 77),
+            new EdgeDef(10, 21, 77), new EdgeDef(21, 10, 77),
+            new EdgeDef(21, 3, 77), new EdgeDef(3, 21, 77),
+            new EdgeDef(2, 8, 77), new EdgeDef(8, 2, 77),
+            new EdgeDef(1, 15, 8), new EdgeDef(15, 1, 8),
+            new EdgeDef(3, 2, 103), new EdgeDef(2, 3, 103),
+            new EdgeDef(6, 7, 97), new EdgeDef(7, 6, 97),
+            new EdgeDef(8, 5, 55), new EdgeDef(5, 8, 55),
+            new EdgeDef(8, 18, 57), new EdgeDef(18, 8, 57),
+            new EdgeDef(9, 5, 8), new EdgeDef(5, 9, 8),
+            new EdgeDef(5, 10, 8), new EdgeDef(10, 5, 8),
+            new EdgeDef(11, 12, 8), new EdgeDef(12, 11, 8),
+            new EdgeDef(13, 14, 8), new EdgeDef(14, 13, 8),
+            new EdgeDef(16, 3, 8), new EdgeDef(3, 16, 8),
+            new EdgeDef(16, 17, 8), new EdgeDef(17, 16, 8),
+            new EdgeDef(19, 20, 8), new EdgeDef(20, 19, 8),
+            new EdgeDef(21, 22, 8), new EdgeDef(22, 21, 8),
+            new EdgeDef(8, 23, 8), new EdgeDef(23, 8, 8),
+            new EdgeDef(23, 6, 8), new EdgeDef(6, 23, 8),
+            new EdgeDef(23, 7, 8), new EdgeDef(7, 23, 8),
+            new EdgeDef(13, 6, 8), new EdgeDef(6, 13, 8)
+    };
+
+    private static final class EdgeDef {
+        final int s, d, w;
+        EdgeDef(int s, int d, int w) { this.s = s; this.d = d; this.w = w; }
+    }
 
     /**
      * Constructor que carga la imagen interna.
@@ -26,67 +64,34 @@ public class MapPanel extends JPanel {
         setOpaque(true);
         setPreferredSize(new Dimension(800, 600));
 
-        graph = new GraphM(23);
-        graph.setEdge(0, 1, 192);
-        graph.setEdge(1, 0, 192);
+        graph = new GraphM(24);
 
-        graph.setEdge(0, 4, 77);
-        graph.setEdge(4, 0, 77);
-
-        graph.setEdge(1, 15, 8);
-        graph.setEdge(15, 1, 8);
-
-        graph.setEdge(3, 2, 103);
-        graph.setEdge(2, 3, 103);
-
-        graph.setEdge(6, 7, 97);
-        graph.setEdge(7, 6, 97);
-
-        graph.setEdge(8, 5, 55);
-        graph.setEdge(5, 8, 55);
-
-        graph.setEdge(8, 18, 57);
-        graph.setEdge(18, 8, 57);
-
-        graph.setEdge(9, 10, 8);
-        graph.setEdge(10, 9, 8);
-
-        graph.setEdge(11, 12, 8);
-        graph.setEdge(12, 11, 8);
-
-        graph.setEdge(13, 14, 8);
-        graph.setEdge(14, 13, 8);
-
-        graph.setEdge(16, 3, 8);
-        graph.setEdge(3, 16, 8);
-
-        graph.setEdge(16, 17, 8);
-        graph.setEdge(17, 16, 8);
-
-        graph.setEdge(19, 20, 8);
-        graph.setEdge(20, 19, 8);
-
-        graph.setEdge(21, 22, 8);
-        graph.setEdge(22, 21, 8);
-
-
+        // Aplicar la lista estructurada de aristas
+        for (EdgeDef e : EDGES) {
+            if (e == null) continue;
+            if (e.s >= 0 && e.s < graph.vertexCount() && e.d >= 0 && e.d < graph.vertexCount()) {
+                graph.setEdge(e.s, e.d, e.w);
+            }
+        }
 
         graphPanel = new GraphPanel(graph);
 
-        try {
-            backgroundImage = ImageIO.read(getClass().getResource(IMAGE_PATH));
-
-            if (backgroundImage == null) {
-                System.err.println("Error: No se pudo cargar la imagen desde la ruta: " + IMAGE_PATH);
-                System.err.println("Verifica que el archivo exista en la carpeta 'resources' y que la ruta sea correcta.");
+        // Cargar la imagen robustamente comprobando que el recurso existe
+        URL imageUrl = getClass().getResource(IMAGE_PATH);
+        if (imageUrl != null) {
+            try {
+                backgroundImage = ImageIO.read(imageUrl);
+                if (backgroundImage == null) {
+                    System.err.println("La imagen se cargó pero es null: " + IMAGE_PATH);
+                }
+            } catch (IOException ex) {
+                System.err.println("Error de E/S al cargar la imagen: " + ex.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println("Error de E/S al cargar la imagen: " + e.getMessage());
-            e.printStackTrace();
+        } else {
+            System.err.println("Recurso de imagen no encontrado en classpath: " + IMAGE_PATH);
         }
+
         add(graphPanel);
-
-
     }
 
     public IGraph getGraph() {
@@ -97,9 +102,6 @@ public class MapPanel extends JPanel {
         return graphPanel;
     }
 
-    /**
-     * Sobrescribe el metodo paintComponent para dibujar la imagen de fondo.
-     */
     /**
      * Sobrescribe el metodo paintComponent para dibujar la imagen de fondo.
      */

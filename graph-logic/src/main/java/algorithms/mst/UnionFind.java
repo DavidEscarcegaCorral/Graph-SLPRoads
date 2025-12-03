@@ -36,7 +36,7 @@ public class UnionFind {
      */
     public int find(int i) {
         if (parent[i] != i) {
-            parent[i] = find(parent[i]); // Compresión de caminos
+            parent[i] = find(parent[i]);
         }
         return parent[i];
     }
@@ -52,7 +52,6 @@ public class UnionFind {
         int rootJ = find(j);
 
         if (rootI != rootJ) {
-            // Unir por rango
             if (rank[rootI] < rank[rootJ]) {
                 parent[rootI] = rootJ;
             } else if (rank[rootI] > rank[rootJ]) {
