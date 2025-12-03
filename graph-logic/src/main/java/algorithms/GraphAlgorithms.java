@@ -9,16 +9,16 @@ import java.util.*;
 
 /**
  * Utilidades estáticas para ejecutar y visualizar algoritmos de grafos.
- *
+ * <p>
  * Alcance y dependencias:
  * - Opera exclusivamente sobre las interfaces {@link interfaces.IGraph} e {@link interfaces.IVisualizer}.
  * - La comunicación con la capa de vista se realiza mediante {@link IVisualizer#pauseAndRedraw(String, int)}
- *   y métodos de marcado de nodos/aristas.
- *
+ * y métodos de marcado de nodos/aristas.
+ * <p>
  * Control de ejecución:
  * - Soporta pausa/reanudación con un candado interno; las actualizaciones de UI deben ocurrir en la EDT.
  * - Los métodos no gestionan hilos por sí mismos; se espera que la capa de control los ejecute en un hilo de fondo.
- *
+ * <p>
  * Algoritmos implementados:
  * - DFS y BFS de recorrido.
  * - MST: Kruskal y Prim.
@@ -35,6 +35,7 @@ public class GraphAlgorithms {
 
     /**
      * Indica si el algoritmo está actualmente en pausa.
+     *
      * @return true si se ha solicitado pausa; false en caso contrario
      */
     public static boolean isPaused() {
@@ -80,7 +81,8 @@ public class GraphAlgorithms {
     /**
      * Inicia un recorrido DFS desde un nodo específico.
      * Prepara marcas y visuales y delega la recursión en {@link #DFS(IVisualizer, int)}.
-     * @param visual vista que implementa {@link IVisualizer}
+     *
+     * @param visual    vista que implementa {@link IVisualizer}
      * @param startNode nodo de inicio (0..V-1)
      */
     public static void runDFSFromNode(IVisualizer visual, int startNode) {
@@ -112,13 +114,13 @@ public class GraphAlgorithms {
         IGraph graph = visual.getGraph();
 
         graph.setMark(vertex, GRAY);
-        visual.pauseAndRedraw("Descubriendo (GRIS): " + vertex, 800);
+        visual.pauseAndRedraw("Descubriendo: " + vertex, 800);
         checkPause();
 
         for (int neighbor = graph.firstNeighbor(vertex); neighbor < graph.vertexCount(); neighbor = graph.nextNeighbor(vertex, neighbor)) {
             if (graph.getMark(neighbor) == WHITE) {
                 visual.markEdge(vertex, neighbor, true);
-                visual.pauseAndRedraw("Arista (AZUL): " + vertex + " -> " + neighbor, 500);
+                visual.pauseAndRedraw("Arista: " + vertex + " -> " + neighbor, 500);
                 checkPause();
 
                 DFS(visual, neighbor);
@@ -126,14 +128,15 @@ public class GraphAlgorithms {
         }
 
         graph.setMark(vertex, BLACK);
-        visual.pauseAndRedraw("Terminando (NEGRO): " + vertex, 800);
+        visual.pauseAndRedraw("Terminando: " + vertex, 800);
         checkPause();
     }
 
     /**
      * Inicia un recorrido BFS desde un nodo específico.
      * Prepara marcas y visuales y delega la iteración en {@link #BFS(IVisualizer, int)}.
-     * @param visual vista que implementa {@link IVisualizer}
+     *
+     * @param visual    vista que implementa {@link IVisualizer}
      * @param startNode nodo de inicio (0..V-1)
      */
     public static void runBFSFromNode(IVisualizer visual, int startNode) {
@@ -145,7 +148,7 @@ public class GraphAlgorithms {
             graph.setMark(v, WHITE);
         }
         visual.resetVisuals();
-        visual.pauseAndRedraw("Estado inicial (BFS). Inicio: " + startNode, 1000);
+        visual.pauseAndRedraw("Estado inicial. Inicio: " + startNode, 1000);
 
         BFS(visual, startNode);
 
@@ -186,15 +189,15 @@ public class GraphAlgorithms {
 
     /**
      * Ejecuta el algoritmo de Kruskal para obtener un Árbol de Expansión Mínima (MST).
-     *
+     * <p>
      * Requisitos y notas:
      * - Se asume grafo no dirigido y ponderado (si es no dirigido, debe existir simetría i->j y j->i).
      * - El algoritmo recorre todas las aristas, las ordena por peso y selecciona aquellas que no forman ciclo
-     *   usando {@link algorithms.mst.UnionFind}.
+     * usando {@link algorithms.mst.UnionFind}.
      * - Devuelve el peso total del MST construido (o del bosque, si el grafo está desconectado).
-     *
+     * <p>
      * Complejidad: O(E log E), dominada por el ordenamiento de aristas.
-     *
+     * <p>
      * Efectos de UI: resetea visuales, marca aristas seleccionadas y muestra mensajes de progreso.
      *
      * @param visual vista que implementa {@link IVisualizer}
@@ -316,7 +319,7 @@ public class GraphAlgorithms {
         PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
         pq.add(new int[]{startNode, 0});
 
-        System.out.println("\n--- TABLA DE DISTANCIAS (DIJKSTRA) ---");
+        System.out.println("\nTabla de distancias inicial");
 
         while (!pq.isEmpty()) {
             int[] current = pq.poll();

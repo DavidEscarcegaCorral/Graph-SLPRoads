@@ -1,6 +1,8 @@
 package graphs;
 
-/** Representación de una arista para la lista de adyacencia. */
+/**
+ * Representación de una arista para la lista de adyacencia.
+ */
 public class Edge {
     private int vert;
     private int weight;
@@ -13,6 +15,7 @@ public class Edge {
     public int getVert() {
         return vert;
     }
+
     public int getWeight() {
         return weight;
     }

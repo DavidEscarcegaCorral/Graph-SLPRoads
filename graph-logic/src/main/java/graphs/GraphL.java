@@ -97,8 +97,6 @@ public class GraphL implements IGraph {
             if (adjacencylist[i].get(k).getVert() == j) {
                 adjacencylist[i].remove(k);
                 numEdge--;
-
-                // repetir el proceso para (j, i) si es no dirigido.
                 return;
             }
         }

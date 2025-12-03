@@ -1,6 +1,7 @@
 package view;
 
 import view.panels.MainAppPanel;
+import view.styles.scroll.ScrollPaneCustom;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +11,7 @@ import java.awt.*;
  * Solo posee un MainPanel.
  */
 public class MainFrame extends JFrame {
+    private ScrollPaneCustom scrollCustom;
 
     public MainFrame() {
         super("Graph-SLPRoads");
@@ -20,6 +22,7 @@ public class MainFrame extends JFrame {
     }
 
     public void setMainPanel(MainAppPanel mainAppPanel) {
-        add(mainAppPanel);
+        scrollCustom = new ScrollPaneCustom(mainAppPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        add(scrollCustom);
     }
 }
