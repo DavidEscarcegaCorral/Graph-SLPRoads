@@ -334,8 +334,6 @@ public class GraphAlgorithms {
     }
 
 
-
-
     static class NodeDist implements Comparable<NodeDist> {
         int node;
         int dist;
@@ -357,7 +355,8 @@ public class GraphAlgorithms {
         IGraph graph = visual.getGraph();
         int n = graph.vertexCount();
 
-        visual.pauseAndRedraw("Iniciando Dijkstra desde " + startNode + " hasta " + endNode, 800);
+        visual.pauseAndRedraw(
+                " Iniciando Dijkstra: calculando la ruta más corta desde el nodo " + startNode + " hasta el nodo " + endNode, 800);
 
         int[] dist = new int[n];
         int[] parent = new int[n];
@@ -372,11 +371,9 @@ public class GraphAlgorithms {
         dist[startNode] = 0;
 
         PriorityQueue<NodeDist> pq = new PriorityQueue<>();
-
         pq.add(new NodeDist(startNode, 0));
 
         while (!pq.isEmpty()) {
-
             NodeDist current = pq.poll();
             int u = current.node;
 
@@ -384,15 +381,21 @@ public class GraphAlgorithms {
             visited[u] = true;
 
             graph.setMark(u, BLACK);
-            visual.pauseAndRedraw("Procesando nodo " + u + ", distancia actual: " + dist[u], 500);
+            visual.pauseAndRedraw(
+                    " Procesando nodo " + u
+                            + ". Distancia conocida hasta este nodo: " + dist[u], 500);
             checkPause();
 
             if (u == endNode) break;
 
-            for (int v = graph.firstNeighbor(u); v != -1; v = graph.nextNeighbor(u, v)) {
+            for (int v = graph.firstNeighbor(u); v < n; v = graph.nextNeighbor(u, v)) {
 
                 int weight = graph.weight(u, v);
                 if (weight < 0) continue;
+
+                visual.pauseAndRedraw(
+                        " Evaluando vecino " + v + " desde nodo " + u
+                                + ". Peso de la arista: " + weight, 300);
 
                 if (!visited[v] && dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
                     dist[v] = dist[u] + weight;
@@ -402,34 +405,44 @@ public class GraphAlgorithms {
 
                     graph.setMark(v, GRAY);
                     visual.markEdge(u, v, true);
-                    visual.pauseAndRedraw("Actualizando distancia a " + v + ": " + dist[v], 300);
+                    visual.pauseAndRedraw(
+                            "Distancia mejorada a nodo " + v
+                                    + " vía nodo " + u + ". Nueva distancia mínima: " + dist[v], 300);
                     checkPause();
                 }
             }
+
+            visual.pauseAndRedraw(
+                    "Nodo " + u + " completamente procesado. Todos sus vecinos han sido evaluados.", 500);
         }
+
+        visual.pauseAndRedraw(
+                "Dijkstra completado. Distancia más corta desde nodo "
+                        + startNode + " hasta nodo " + endNode + " = " + dist[endNode], 0);
 
         return dist[endNode];
     }
 
 
-
     public static int runBellmanFord(IVisualizer visual, int startNode, int endNode) {
         if (isPaused) resumeAlgorithm();
+
         IGraph graph = visual.getGraph();
         int n = graph.vertexCount();
 
         resetForMST(visual, graph);
-        visual.pauseAndRedraw("Iniciando Bellman-Ford desde " + startNode + " hasta " + endNode, 1000);
+
+        visual.pauseAndRedraw(
+                "Iniciando Bellman-Ford: calculando distancias mínimas desde nodo "
+                        + startNode + " hasta nodo " + endNode, 1000);
 
         int[] dist = new int[n];
         int[] parent = new int[n];
-
         Arrays.fill(dist, Integer.MAX_VALUE);
         Arrays.fill(parent, -1);
         dist[startNode] = 0;
 
         List<EdgeContext> edges = new ArrayList<>();
-
         for (int u = 0; u < n; u++) {
             for (int v = graph.firstNeighbor(u); v < n; v = graph.nextNeighbor(u, v)) {
                 edges.add(new EdgeContext(u, v, graph.weight(u, v)));
@@ -437,7 +450,7 @@ public class GraphAlgorithms {
         }
 
         for (int i = 1; i < n; i++) {
-            visual.pauseAndRedraw("Iteración " + i + " de relajación...", 700);
+            visual.pauseAndRedraw("Iteración " + i + " de relajación de todas las aristas...", 700);
             checkPause();
 
             boolean changed = false;
@@ -448,7 +461,6 @@ public class GraphAlgorithms {
                 int w = e.weight;
 
                 if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
-
                     dist[v] = dist[u] + w;
                     parent[v] = u;
                     changed = true;
@@ -458,20 +470,17 @@ public class GraphAlgorithms {
                     visual.markEdge(u, v, true);
 
                     visual.pauseAndRedraw(
-                            "Relajando: " + u + " → " + v +
-                                    " | Nuevo costo: " + dist[v],
-                            500
-                    );
+                            "Arista " + u + " → " + v
+                                    + " relajada. Nueva distancia mínima a nodo " + v + ": " + dist[v], 500);
                     checkPause();
                 }
             }
 
             if (!changed) {
-                visual.pauseAndRedraw("No hubo cambios en esta iteración. Finalizando temprano.", 600);
+                visual.pauseAndRedraw(" No se actualizaron distancias en esta iteración. Terminando temprano.", 600);
                 break;
             }
         }
-
 
         for (EdgeContext e : edges) {
             int u = e.source;
@@ -479,7 +488,7 @@ public class GraphAlgorithms {
             int w = e.weight;
 
             if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
-                visual.pauseAndRedraw(" CICLO NEGATIVO DETECTADO. No hay solución válida.", 1500);
+                visual.pauseAndRedraw("Ciclo negativo detectado en la arista " + u + " → " + v + ". No existe solución válida.", 1500);
                 return Integer.MIN_VALUE;
             }
         }
@@ -490,14 +499,12 @@ public class GraphAlgorithms {
             node = parent[node];
         }
 
-        visual.pauseAndRedraw("Bellman-Ford Terminado. Distancia mínima = " + dist[endNode], 0);
+        visual.pauseAndRedraw(
+                "Bellman-Ford completado. Distancia mínima desde nodo "
+                        + startNode + " hasta nodo " + endNode + " = " + dist[endNode], 0);
 
         return dist[endNode];
     }
-
-
-
-
 
 
     private static void addEdgesToPQ(IGraph graph, int u, PriorityQueue<EdgeContext> pq, boolean[] inMST) {

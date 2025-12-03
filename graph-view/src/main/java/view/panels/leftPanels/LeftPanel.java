@@ -3,7 +3,7 @@ package view.panels.leftPanels;
 import javax.swing.*;
 
 public class LeftPanel extends JPanel {
-    private MapPanel mapPanel;
+    private final MapPanel mapPanel;
 
     public LeftPanel(ControlsPanel controlsPanel) {
         setOpaque(false);
