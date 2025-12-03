@@ -6,7 +6,7 @@ import view.control.ViewControl;
 import javax.swing.*;
 
 public class GraphSLPRoads {
-    static void main(String[] args) {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

@@ -45,7 +45,7 @@ public class GraphM implements IGraph {
         for (int i = 0; i < markArray.length; i++)
             if (matrix[v][i] != 0)
                 return i;
-        return -1;
+        return markArray.length;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class GraphM implements IGraph {
         for (int i = after + 1; i < markArray.length; i++)
             if (matrix[v][i] != 0)
                 return i;
-        return -1;
+        return markArray.length;
     }
 
     @Override

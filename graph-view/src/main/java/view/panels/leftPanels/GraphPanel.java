@@ -165,7 +165,12 @@ public class GraphPanel extends JPanel implements IVisualizer {
         g2.setColor(Colors.COLOR_BUTTON);
         g2.drawOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
 
-        g2.setColor(Colors.COLOR_BUTTON);
+        if (graph.getMark(v) == GraphAlgorithms.BLACK) {
+            g2.setColor(Color.WHITE);
+        } else {
+            g2.setColor(Colors.COLOR_BUTTON);
+        }
+
         g2.setFont(new Font("Arial", Font.BOLD, 14));
 
         String text = String.valueOf(v);
