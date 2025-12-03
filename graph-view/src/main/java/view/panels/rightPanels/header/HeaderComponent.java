@@ -16,10 +16,18 @@ public class HeaderComponent extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         setPreferredSize(new Dimension(500, 55));
 
-        aboutGraphBtn = new Button("Sobre los grafos", 200, 35, 15, 0, Color.black, Colors.COLOR_HEADER, Colors.COLOR_HEADER_HOOVER);
+        aboutGraphBtn = new Button("Sobre los grafos", 200, 35, 15, 0, Color.black, Colors.COLOR_HEADER,
+                Colors.COLOR_HEADER_HOOVER);
         aboutGraphBtn.setNewFont(18, "Inter_Regular");
-        aboutProyectBtn = new Button("Sobre el proyecto", 200, 35, 15, 0, Color.black, Colors.COLOR_HEADER, Colors.COLOR_HEADER_HOOVER);
+        aboutProyectBtn = new Button("Sobre el proyecto", 200, 35, 15, 0, Color.black, Colors.COLOR_HEADER,
+                Colors.COLOR_HEADER_HOOVER);
         aboutProyectBtn.setNewFont(18, "Inter_Regular");
+        aboutGraphBtn.addActionListener(e -> {
+
+        });
+        aboutProyectBtn.addActionListener(e -> {
+
+        });
 
         add(aboutGraphBtn);
         add(aboutProyectBtn);
