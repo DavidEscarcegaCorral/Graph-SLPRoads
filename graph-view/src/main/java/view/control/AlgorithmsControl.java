@@ -4,6 +4,7 @@ import algorithms.GraphAlgorithms;
 import view.MainFrame;
 import view.panels.leftPanels.ControlsPanel;
 import view.panels.leftPanels.GraphPanel;
+import view.panels.leftPanels.MapPanel;
 import view.panels.rightPanels.mst.MSTMenuComponent;
 import view.panels.rightPanels.searchAlgorithms.SearchAlgorithmsComponent;
 import view.panels.rightPanels.shortestPath.ShortestPathComponent;
@@ -14,6 +15,7 @@ public class AlgorithmsControl {
     private final MainFrame mainFrame;
     private final GraphPanel graphPanel;
     private final ControlsPanel controlsPanel;
+    private final MapPanel mapPanel;
 
     private final SearchAlgorithmsComponent searchPanel;
     private final MSTMenuComponent mstPanel;
@@ -22,12 +24,14 @@ public class AlgorithmsControl {
     public AlgorithmsControl(MainFrame mainFrame,
                              GraphPanel graphPanel,
                              ControlsPanel controlsPanel,
+                             MapPanel mapPanel,
                              SearchAlgorithmsComponent searchPanel,
                              MSTMenuComponent mstPanel,
                              ShortestPathComponent shortestPathComponent) {
         this.mainFrame = mainFrame;
         this.graphPanel = graphPanel;
         this.controlsPanel = controlsPanel;
+        this.mapPanel = mapPanel;
         this.searchPanel = searchPanel;
         this.mstPanel = mstPanel;
         this.shortestPathComponent = shortestPathComponent;
@@ -159,13 +163,21 @@ public class AlgorithmsControl {
         try {
             String text = field.getText();
             if (text.isEmpty()) throw new NumberFormatException();
-            int node = Integer.parseInt(text);
-
-            if (node < 0 || node >= maxVertices) {
-                JOptionPane.showMessageDialog(mainFrame, "Nodo fuera de rango (0-" + (maxVertices - 1) + ")");
+            try {
+                int node = Integer.parseInt(text);
+                if (node < 0 || node >= maxVertices) {
+                    JOptionPane.showMessageDialog(mainFrame, "Nodo fuera de rango (0-" + (maxVertices - 1) + ")");
+                    return -1;
+                }
+                return node;
+            } catch (NumberFormatException ex) {
+                if (mapPanel != null) {
+                    int idx = mapPanel.findNodeByName(text);
+                    if (idx >= 0) return idx;
+                }
+                JOptionPane.showMessageDialog(mainFrame, "Ingrese un nodo válido (número o nombre de localidad).\nEj: 0 o 'San Luis Potosí'");
                 return -1;
             }
-            return node;
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(mainFrame, "Ingrese un nodo válido.");
             return -1;

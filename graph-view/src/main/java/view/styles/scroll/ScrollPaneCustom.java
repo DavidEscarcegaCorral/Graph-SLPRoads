@@ -23,24 +23,30 @@ public class ScrollPaneCustom extends JScrollPane {
     private void aplicarEstilo() {
         setOpaque(false);
         getViewport().setOpaque(false);
-        // NOTA: no forzamos las políticas aquí para respetar las que pueda pasar el creador
-        // (por ejemplo: VERTICAL_SCROLLBAR_ALWAYS si se quiere forzar la barra vertical).
 
-        getVerticalScrollBar().setUnitIncrement(20);
-        getHorizontalScrollBar().setUnitIncrement(20);
+        JScrollBar vertical = getVerticalScrollBar();
+        JScrollBar horizontal = getHorizontalScrollBar();
+
+        vertical.setOpaque(true);
+        horizontal.setOpaque(true);
+
+        vertical.setUnitIncrement(20);
+        horizontal.setUnitIncrement(20);
         setBorder(null);
 
         ScrollBarCustom miUI = new ScrollBarCustom();
-
-        JScrollBar vertical = getVerticalScrollBar();
         vertical.setUI(miUI);
-
-        JScrollBar horizontal = getHorizontalScrollBar();
         horizontal.setUI(miUI);
+
+        // Forzar tamaño visible de la barra vertical y colores de track
+        int ancho = miUI.getPreferredSize(vertical).width;
+        vertical.setPreferredSize(new Dimension(Math.max(ancho, 12), vertical.getPreferredSize().height));
+        vertical.setBackground(new Color(240, 240, 240));
+        horizontal.setBackground(new Color(240, 240, 240));
+
+        vertical.setVisible(true);
 
         this.setBorder(BorderFactory.createEmptyBorder());
 
-        // DEBUG: si quieres forzar que la barra vertical siempre esté visible durante pruebas,
-        // puedes pasar JScrollPane.VERTICAL_SCROLLBAR_ALWAYS en el constructor de ScrollPaneCustom.
     }
 }

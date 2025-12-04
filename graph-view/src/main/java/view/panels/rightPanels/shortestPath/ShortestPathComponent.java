@@ -100,6 +100,10 @@ public class ShortestPathComponent extends JPanel {
         return textFieldDestino;
     }
 
+    public Button getCitiesBtn() {
+        return citiesBtn;
+    }
+
     public TxtFieldPh getTextFieldOrigen() {
         return textFieldOrigen;
     }

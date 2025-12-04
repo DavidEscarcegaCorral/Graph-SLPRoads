@@ -7,18 +7,18 @@ import view.styles.Colors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Panel que representa visualmente el estado del grafo.
  * Implementa IVisualizer para comunicarse con la lógica.
  */
 public class GraphPanel extends JPanel implements IVisualizer {
-    private IGraph graph;
-    private Point[] positions;
+    private final IGraph graph;
+    private final Point[] positions;
     private boolean[][] visitedEdges;
+    private JTextArea logArea;
+    private Dimension originalMapSize = null;
 
     private static final int NODE_DIAMETER = 30;
     private static final int NODE_RADIUS = NODE_DIAMETER / 2;
@@ -47,7 +47,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
             new Point(272, 515), // Nodo 20
             new Point(307, 401), // Nodo 21
             new Point(239, 358), // Nodo 22
-            new Point(597, 510)  // Nodo 22
+            new Point(597, 510)  // Nodo 23
     };
 
     /**
@@ -56,6 +56,13 @@ public class GraphPanel extends JPanel implements IVisualizer {
      * @param g El grafo a visualizar.
      */
     public GraphPanel(IGraph g) {
+        this(g, null);
+    }
+
+    /**
+     * Nuevo constructor que recibe las posiciones de los nodos (en coordenadas del mapa).
+     */
+    public GraphPanel(IGraph g, Point[] positions) {
         setOpaque(false);
         this.graph = g;
         int nodeCount = graph.vertexCount();
@@ -66,13 +73,25 @@ public class GraphPanel extends JPanel implements IVisualizer {
         setBackground(Color.white);
         setPreferredSize(new Dimension(775, 705));
 
-        for (int i = 0; i < nodeCount; i++) {
-            if (i < NODE_LOCATIONS.length) {
-                positions[i] = NODE_LOCATIONS[i];
-            } else {
-                positions[i] = new Point(100, 100);
+        if (positions != null && positions.length >= nodeCount) {
+            for (int i = 0; i < nodeCount; i++) this.positions[i] = positions[i];
+        } else {
+            for (int i = 0; i < nodeCount; i++) {
+                if (i < NODE_LOCATIONS.length) {
+                    this.positions[i] = NODE_LOCATIONS[i];
+                } else {
+                    this.positions[i] = new Point(100, 100);
+                }
             }
         }
+    }
+
+    public void setLogArea(JTextArea area) {
+        this.logArea = area;
+    }
+
+    public void setMapOriginalSize(Dimension orig) {
+        this.originalMapSize = orig;
     }
 
     @Override
@@ -97,11 +116,44 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
     @Override
     public void pauseAndRedraw(String message, int milliseconds) {
-        try {
-            System.out.println(message);
+        if (SwingUtilities.isEventDispatchThread()) {
+            if (message != null) {
+                if (logArea != null) {
+                    logArea.append(message + "\n");
+                    logArea.setCaretPosition(logArea.getDocument().getLength());
+                }
+            }
             this.repaint();
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
+            try { Thread.sleep(Math.max(0, milliseconds)); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); }
+            return;
+        }
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        SwingUtilities.invokeLater(() -> {
+            if (message != null) {
+                if (logArea != null) {
+                    logArea.append(message + "\n");
+                    logArea.setCaretPosition(logArea.getDocument().getLength());
+                }
+            }
+            this.repaint();
+
+            if (milliseconds <= 0) {
+                latch.countDown();
+            } else {
+                Timer t = new Timer(milliseconds, ev -> {
+                    ((Timer) ev.getSource()).stop();
+                    latch.countDown();
+                });
+                t.setRepeats(false);
+                t.start();
+            }
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
     }
@@ -113,62 +165,77 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(1.5f));
+        g2.setStroke(new BasicStroke(2.5f)); // un poco más grueso para que se note sobre el mapa
 
-        // Dibuja aristas
+        // calcular factores de escala
+        double sx = 1.0, sy = 1.0;
+        if (originalMapSize != null && originalMapSize.width > 0 && originalMapSize.height > 0) {
+            sx = (double) getWidth() / originalMapSize.width;
+            sy = (double) getHeight() / originalMapSize.height;
+        }
+
+        // Dibuja aristas con posiciones escaladas
         for (int source = 0; source < graph.vertexCount(); source++) {
             for (int dest = 0; dest < graph.vertexCount(); dest++) {
                 if (graph.isEdge(source, dest)) {
-                    drawSimpleEdge(g2, source, dest);
+                    drawSimpleEdge(g2, source, dest, sx, sy);
                 }
             }
         }
 
         for (int v = 0; v < graph.vertexCount(); v++) {
-            drawNode(g2, v);
+            drawNode(g2, v, sx, sy);
         }
     }
 
-    private void drawSimpleEdge(Graphics2D g2, int source, int dest) {
+    private void drawSimpleEdge(Graphics2D g2, int source, int dest, double sx, double sy) {
         if (visitedEdges[source][dest]) {
             g2.setColor(Color.BLUE);
         } else {
             g2.setColor(Color.DARK_GRAY);
         }
 
-        int x1 = positions[source].x + NODE_RADIUS;
-        int y1 = positions[source].y + NODE_RADIUS;
-        int x2 = positions[dest].x + NODE_RADIUS;
-        int y2 = positions[dest].y + NODE_RADIUS;
+        int x1 = (int) Math.round((positions[source].x + NODE_RADIUS) * sx);
+        int y1 = (int) Math.round((positions[source].y + NODE_RADIUS) * sy);
+        int x2 = (int) Math.round((positions[dest].x + NODE_RADIUS) * sx);
+        int y2 = (int) Math.round((positions[dest].y + NODE_RADIUS) * sy);
 
         g2.drawLine(x1, y1, x2, y2);
     }
 
-    private void drawNode(Graphics2D g2, int v) {
-        switch (graph.getMark(v)) {
-            case GraphAlgorithms.GRAY:
-                g2.setColor(Color.GRAY);
-                break;
-            case GraphAlgorithms.BLACK:
-                g2.setColor(Colors.COLOR_BUTTON);
-                break;
-            default:
-                g2.setColor(Color.WHITE);
-                break;
+    private void drawNode(Graphics2D g2, int v, double sx, double sy) {
+        // Relleno con color contrastante para que sea visible sobre el mapa
+        if (graph.getMark(v) == GraphAlgorithms.BLACK) {
+            g2.setColor(Colors.COLOR_BUTTON);
+        } else if (graph.getMark(v) == GraphAlgorithms.GRAY) {
+            g2.setColor(Color.GRAY);
+        } else {
+            g2.setColor(new Color(255, 255, 255, 230));
         }
 
-        int x = positions[v].x;
-        int y = positions[v].y;
+        int x = (int) Math.round(positions[v].x * sx);
+        int y = (int) Math.round(positions[v].y * sy);
 
+        g2.setColor(new Color(255, 255, 255, 200));
+        g2.fillOval(x - 3, y - 3, NODE_DIAMETER + 6, NODE_DIAMETER + 6);
+
+        if (graph.getMark(v) == GraphAlgorithms.BLACK) {
+            g2.setColor(Colors.COLOR_BUTTON);
+        } else if (graph.getMark(v) == GraphAlgorithms.GRAY) {
+            g2.setColor(Color.LIGHT_GRAY);
+        } else {
+            g2.setColor(Color.WHITE);
+        }
         g2.fillOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
 
-        g2.setColor(Colors.COLOR_BUTTON);
+        g2.setColor(Colors.COLOR_BUTTON.darker());
+        g2.setStroke(new BasicStroke(2.0f));
         g2.drawOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
 
         if (graph.getMark(v) == GraphAlgorithms.BLACK) {
             g2.setColor(Color.WHITE);
         } else {
-            g2.setColor(Colors.COLOR_BUTTON);
+            g2.setColor(Colors.COLOR_BUTTON.darker());
         }
 
         g2.setFont(new Font("Arial", Font.BOLD, 14));

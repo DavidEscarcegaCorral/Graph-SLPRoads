@@ -11,6 +11,7 @@ import view.panels.rightPanels.header.OptionsMenuComponent;
 import view.panels.rightPanels.mst.MSTMenuComponent;
 import view.panels.rightPanels.searchAlgorithms.SearchAlgorithmsComponent;
 import view.panels.rightPanels.shortestPath.ShortestPathComponent;
+import view.dialogs.NodesDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,6 +45,7 @@ public class ViewControl {
                 mainFrame,
                 leftPanel.getMapPanel().getGraphPanel(),
                 controlsPanel,
+                leftPanel.getMapPanel(),
                 searchAlgorithmsComponent,
                 mstMenuComponent,
                 shortestPathComponent
@@ -65,11 +67,34 @@ public class ViewControl {
         mstMenuComponent = new MSTMenuComponent();
         shortestPathComponent = new ShortestPathComponent();
 
+        // Conectar botones 'Ver ciudades' para mostrar el dialog
+        searchAlgorithmsComponent.getCitiesBtn().addActionListener(e -> {
+            NodesDialog dlg = new NodesDialog(mainFrame, leftPanel.getMapPanel().getNodeSummaries());
+            dlg.setVisible(true);
+        });
+        mstMenuComponent.getCitiesBtn().addActionListener(e -> {
+            NodesDialog dlg = new NodesDialog(mainFrame, leftPanel.getMapPanel().getNodeSummaries());
+            dlg.setVisible(true);
+        });
+        shortestPathComponent.getCitiesBtn().addActionListener(e -> {
+            NodesDialog dlg = new NodesDialog(mainFrame, leftPanel.getMapPanel().getNodeSummaries());
+            dlg.setVisible(true);
+        });
+
         rightPanel = new RightPanel(headerMenuPanel);
+
+        rightPanel.getClearLogBtn().addActionListener(e -> {
+            String key = "SEARCH";
+            if (currentCategory == AlgorithmCategory.MST) key = "MST";
+            else if (currentCategory == AlgorithmCategory.SHORTEST_PATH) key = "SP";
+            rightPanel.clearCurrentLog(key);
+        });
 
         // Panel Izquierdo
         controlsPanel = new ControlsPanel();
         leftPanel = new LeftPanel(controlsPanel);
+
+        leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getLogArea());
 
         mainAppPanel.setLeftPanel(leftPanel);
         mainAppPanel.setRightPanel(rightPanel);
@@ -96,6 +121,7 @@ public class ViewControl {
         controlsPanel.getPauseBtn().addActionListener(e ->
                 algorithmsControl.onTogglePause()
         );
+
     }
 
     private void showWelcomeView() {
@@ -119,6 +145,18 @@ public class ViewControl {
         this.currentCategory = newCategory;
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
+
+        // Seleccionar la tarjeta correspondiente y conectar el GraphPanel al TextArea correcto
+        if (newCategory == AlgorithmCategory.SEARCH) {
+            rightPanel.showLogCard("SEARCH");
+            leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getSearchLogArea());
+        } else if (newCategory == AlgorithmCategory.MST) {
+            rightPanel.showLogCard("MST");
+            leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getMstLogArea());
+        } else if (newCategory == AlgorithmCategory.SHORTEST_PATH) {
+            rightPanel.showLogCard("SP");
+            leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getSpLogArea());
+        }
 
         switch (newCategory) {
             case SEARCH:
