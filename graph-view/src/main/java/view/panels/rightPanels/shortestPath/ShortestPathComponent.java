@@ -32,7 +32,7 @@ public class ShortestPathComponent extends JPanel {
 
     public ShortestPathComponent() {
         setOpaque(false);
-        setPreferredSize(new Dimension(700, 560));
+        setPreferredSize(new Dimension(700, 500));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -93,8 +93,6 @@ public class ShortestPathComponent extends JPanel {
         TextAreaCustom consoleArea = new TextAreaCustom(10, 20);
         ScrollPaneCustom scroll = new ScrollPaneCustom(consoleArea);
 
-        p4.add(scroll, BorderLayout.CENTER);
-
         ConsoleTee.getInstance().register(consoleArea, AlgorithmCategory.SHORTEST_PATH);
 
         JPanel southPanel = new JPanel(new BorderLayout());
@@ -112,6 +110,7 @@ public class ShortestPathComponent extends JPanel {
         btnWrapPanel.add(clearBtn);
         southPanel.add(btnWrapPanel, BorderLayout.EAST);
 
+        p4.add(scroll, BorderLayout.CENTER);
         p4.add(southPanel, BorderLayout.SOUTH);
 
         add(titlePanel);

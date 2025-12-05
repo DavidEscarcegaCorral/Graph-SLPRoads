@@ -30,7 +30,7 @@ public class SearchAlgorithmsComponent extends JPanel {
 
     public SearchAlgorithmsComponent() {
         setOpaque(false);
-        setPreferredSize(new Dimension(700, 360));
+        setPreferredSize(new Dimension(700, 500));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -54,7 +54,7 @@ public class SearchAlgorithmsComponent extends JPanel {
 
         p4 = new JPanel(new BorderLayout());
         p4.setOpaque(false);
-        p4.setMaximumSize(new Dimension(700, 200));
+        p4.setMaximumSize(new Dimension(700, 450));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
         JLabel titleLbL = new JLabel("Recorrido del grafo");
@@ -92,8 +92,6 @@ public class SearchAlgorithmsComponent extends JPanel {
         TextAreaCustom consoleArea = new TextAreaCustom(10, 20);
         ScrollPaneCustom scroll = new ScrollPaneCustom(consoleArea);
 
-        p4.add(scroll, BorderLayout.CENTER);
-
         ConsoleTee.getInstance().register(consoleArea, AlgorithmCategory.SEARCH);
 
         JPanel southPanel = new JPanel(new BorderLayout());
@@ -110,6 +108,7 @@ public class SearchAlgorithmsComponent extends JPanel {
         btnWrapPanel.add(clearBtn);
         southPanel.add(btnWrapPanel, BorderLayout.EAST);
 
+        p4.add(scroll, BorderLayout.CENTER);
         p4.add(southPanel, BorderLayout.SOUTH);
 
         add(titlePanel);

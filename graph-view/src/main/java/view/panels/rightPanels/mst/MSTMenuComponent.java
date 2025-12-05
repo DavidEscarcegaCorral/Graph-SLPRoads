@@ -31,7 +31,7 @@ public class MSTMenuComponent extends JPanel {
 
     public MSTMenuComponent() {
         setOpaque(false);
-        setPreferredSize(new Dimension(700, 360));
+        setPreferredSize(new Dimension(700, 500));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -55,7 +55,7 @@ public class MSTMenuComponent extends JPanel {
 
         p4 = new JPanel(new BorderLayout());
         p4.setOpaque(false);
-        p4.setMaximumSize(new Dimension(700, 200));
+        p4.setMaximumSize(new Dimension(700, 360));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
         JLabel titleLbL = new JLabel("Árbol de expansion minima");

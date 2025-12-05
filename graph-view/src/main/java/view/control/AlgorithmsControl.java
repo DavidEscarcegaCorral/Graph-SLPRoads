@@ -62,13 +62,6 @@ public class AlgorithmsControl {
      * Inicia la simulación basada en la categoría actual que le pasa el ViewControl.
      */
     public void startSimulation(AlgorithmCategory currentCategory) {
-        if (currentCategory == null) {
-            JOptionPane.showMessageDialog(mainFrame,
-                    "Por favor seleccione una categoría del menú primero.",
-                    "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
         int startNode = 0;
         int endNode = -1;
         boolean isValid = true;
@@ -76,13 +69,15 @@ public class AlgorithmsControl {
         switch (currentCategory) {
             case SEARCH:
                 startNode = validateAndGetStartNode(searchPanel.getTextField());
-                if (startNode == -1) isValid = false;
+                if (startNode == -1)
+                    isValid = false;
                 break;
 
             case MST:
                 if (mstPanel.isPrimSelected()) {
                     startNode = validateAndGetStartNode(mstPanel.getTextField());
-                    if (startNode == -1) isValid = false;
+                    if (startNode == -1)
+                        isValid = false;
                 }
                 break;
 
@@ -90,15 +85,14 @@ public class AlgorithmsControl {
                 startNode = validateAndGetStartNode(shortestPathComponent.getTextFieldOrigen());
                 endNode = validateAndGetStartNode(shortestPathComponent.getTextFieldDestino());
 
-                if (startNode == -1 || endNode == -1) isValid = false;
+                if (startNode == -1 || endNode == -1)
+                    isValid = false;
                 break;
         }
 
         if (!isValid) return;
 
-        // Reseteo visual específico para rutas más cortas: limpiamos la vista antes de ejecutar
         if (currentCategory == AlgorithmCategory.SHORTEST_PATH) {
-            // Aseguramos que el reset se ejecute y termine antes de iniciar el algoritmo
             if (SwingUtilities.isEventDispatchThread()) {
                 graphPanel.resetVisuals();
             } else {
