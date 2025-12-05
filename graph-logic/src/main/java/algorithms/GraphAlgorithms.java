@@ -392,7 +392,6 @@ public class GraphAlgorithms {
 
             if (current.dist != dist[u]) continue;
 
-            graph.setMark(u, BLACK);
             visual.pauseAndRedraw(
                     " Procesando nodo " + u
                             + ". Distancia conocida hasta este nodo: " + dist[u], 500);
@@ -439,6 +438,10 @@ public class GraphAlgorithms {
             path.add(cur);
         }
         Collections.reverse(path);
+
+        for (int nodeId : path) {
+            graph.setMark(nodeId, BLACK);
+        }
 
         for (int i = 0; i < path.size() - 1; i++) {
             int a = path.get(i);
