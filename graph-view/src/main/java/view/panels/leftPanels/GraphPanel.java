@@ -8,6 +8,8 @@ import view.styles.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -50,6 +52,20 @@ public class GraphPanel extends JPanel implements IVisualizer {
             new Point(597, 510)  // Nodo 23
     };
 
+    // Cached scaled center coordinates
+    private int[] centerX;
+    private int[] centerY;
+    private volatile boolean scaledDirty = true;
+
+    // Cached resources to avoid allocations each paint
+    private final Font nodeFont;
+    private final BasicStroke edgeStroke = new BasicStroke(2.5f);
+    private final BasicStroke nodeStroke = new BasicStroke(2.0f);
+    private static final Color NODE_SHADOW = new Color(255, 255, 255, 200);
+    private static final Color NODE_FILL_WHITE = Color.WHITE;
+    private static final Color EDGE_VISITED = Color.BLUE;
+    private static final Color EDGE_DEFAULT = Color.DARK_GRAY;
+
     /**
      * Constructor del panel.
      *
@@ -74,7 +90,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
         setPreferredSize(new Dimension(775, 705));
 
         if (positions != null && positions.length >= nodeCount) {
-            for (int i = 0; i < nodeCount; i++) this.positions[i] = positions[i];
+            System.arraycopy(positions, 0, this.positions, 0, nodeCount);
         } else {
             for (int i = 0; i < nodeCount; i++) {
                 if (i < NODE_LOCATIONS.length) {
@@ -84,10 +100,27 @@ public class GraphPanel extends JPanel implements IVisualizer {
                 }
             }
         }
+
+        this.nodeFont = FontUtil.loadFont(14, "Inter_Thin_Italic");
+
+        this.centerX = new int[nodeCount];
+        this.centerY = new int[nodeCount];
+
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                markScaledDirty();
+            }
+        });
+    }
+
+    private void markScaledDirty() {
+        scaledDirty = true;
     }
 
     public void setMapOriginalSize(Dimension orig) {
         this.originalMapSize = orig;
+        markScaledDirty();
     }
 
     @Override
@@ -102,16 +135,17 @@ public class GraphPanel extends JPanel implements IVisualizer {
         }
         int count = graph.vertexCount();
         this.visitedEdges = new boolean[count][count];
+        markScaledDirty();
         repaint();
     }
 
     @Override
     public void markEdge(int source, int destination, boolean visited) {
+        if (source < 0 || destination < 0) return;
+        if (source >= visitedEdges.length || destination >= visitedEdges.length) return;
         this.visitedEdges[source][destination] = visited;
-        if (source >= 0 && destination >= 0 && source < visitedEdges.length && destination < visitedEdges.length) {
-            if (graph.isEdge(destination, source)) {
-                this.visitedEdges[destination][source] = visited;
-            }
+        if (graph.isEdge(destination, source)) {
+            this.visitedEdges[destination][source] = visited;
         }
     }
 
@@ -156,7 +190,78 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(2.5f));
+
+        if (scaledDirty) {
+            recomputeScaledPositions();
+        }
+
+        int n = graph.vertexCount();
+        int[] cx = this.centerX;
+        int[] cy = this.centerY;
+        boolean[][] localVisited = this.visitedEdges;
+
+        g2.setStroke(edgeStroke);
+        for (int source = 0; source < n; source++) {
+            for (int dest = 0; dest < n; dest++) {
+                if (graph.isEdge(source, dest)) {
+                    if (source <= dest || !graph.isEdge(dest, source)) {
+                        g2.setColor(localVisited[source][dest] ? EDGE_VISITED : EDGE_DEFAULT);
+                        g2.drawLine(cx[source], cy[source], cx[dest], cy[dest]);
+                    }
+                }
+            }
+        }
+
+        g2.setFont(nodeFont);
+        g2.setStroke(nodeStroke);
+
+        for (int v = 0; v < n; v++) {
+            int mark = graph.getMark(v);
+            Color fill;
+            Color borderColor;
+            Color textColor;
+            if (mark == GraphAlgorithms.BLACK) {
+                fill = Colors.COLOR_BUTTON;
+                borderColor = Colors.COLOR_BUTTON.darker();
+                textColor = Color.WHITE;
+            } else if (mark == GraphAlgorithms.GRAY) {
+                fill = Color.LIGHT_GRAY;
+                borderColor = Colors.COLOR_BUTTON.darker();
+                textColor = Colors.COLOR_BUTTON.darker();
+            } else {
+                fill = NODE_FILL_WHITE;
+                borderColor = Colors.COLOR_BUTTON.darker();
+                textColor = Colors.COLOR_BUTTON.darker();
+            }
+
+            int x = cx[v] - NODE_RADIUS;
+            int y = cy[v] - NODE_RADIUS;
+
+            g2.setColor(NODE_SHADOW);
+            g2.fillOval(x - 3, y - 3, NODE_DIAMETER + 6, NODE_DIAMETER + 6);
+
+            g2.setColor(fill);
+            g2.fillOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
+
+            g2.setColor(borderColor);
+            g2.drawOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
+
+            String text = String.valueOf(v);
+            FontMetrics fm = g2.getFontMetrics();
+            int textX = x + (NODE_DIAMETER - fm.stringWidth(text)) / 2;
+            int textY = y + (NODE_DIAMETER + fm.getAscent()) / 2 - 2;
+
+            g2.setColor(textColor);
+            g2.drawString(text, textX, textY);
+        }
+    }
+
+    private synchronized void recomputeScaledPositions() {
+        int n = graph.vertexCount();
+        if (centerX == null || centerX.length != n) {
+            centerX = new int[n];
+            centerY = new int[n];
+        }
 
         double sx = 1.0, sy = 1.0;
         if (originalMapSize != null && originalMapSize.width > 0 && originalMapSize.height > 0) {
@@ -164,78 +269,11 @@ public class GraphPanel extends JPanel implements IVisualizer {
             sy = (double) getHeight() / originalMapSize.height;
         }
 
-        for (int source = 0; source < graph.vertexCount(); source++) {
-            for (int dest = 0; dest < graph.vertexCount(); dest++) {
-                if (graph.isEdge(source, dest)) {
-                    if (source <= dest || !graph.isEdge(dest, source)) {
-                        drawSimpleEdge(g2, source, dest, sx, sy);
-                    }
-                }
-            }
+        for (int i = 0; i < n; i++) {
+            centerX[i] = (int) Math.round((positions[i].x + NODE_RADIUS) * sx);
+            centerY[i] = (int) Math.round((positions[i].y + NODE_RADIUS) * sy);
         }
 
-        for (int v = 0; v < graph.vertexCount(); v++) {
-            drawNode(g2, v, sx, sy);
-        }
-    }
-
-    private void drawSimpleEdge(Graphics2D g2, int source, int dest, double sx, double sy) {
-        if (visitedEdges[source][dest]) {
-            g2.setColor(Color.BLUE);
-        } else {
-            g2.setColor(Color.DARK_GRAY);
-        }
-
-        int x1 = (int) Math.round((positions[source].x + NODE_RADIUS) * sx);
-        int y1 = (int) Math.round((positions[source].y + NODE_RADIUS) * sy);
-        int x2 = (int) Math.round((positions[dest].x + NODE_RADIUS) * sx);
-        int y2 = (int) Math.round((positions[dest].y + NODE_RADIUS) * sy);
-
-        g2.drawLine(x1, y1, x2, y2);
-    }
-
-    private void drawNode(Graphics2D g2, int v, double sx, double sy) {
-        if (graph.getMark(v) == GraphAlgorithms.BLACK) {
-            g2.setColor(Colors.COLOR_BUTTON);
-        } else if (graph.getMark(v) == GraphAlgorithms.GRAY) {
-            g2.setColor(Color.GRAY);
-        } else {
-            g2.setColor(new Color(255, 255, 255, 230));
-        }
-
-        int x = (int) Math.round(positions[v].x * sx);
-        int y = (int) Math.round(positions[v].y * sy);
-
-        g2.setColor(new Color(255, 255, 255, 200));
-        g2.fillOval(x - 3, y - 3, NODE_DIAMETER + 6, NODE_DIAMETER + 6);
-
-        if (graph.getMark(v) == GraphAlgorithms.BLACK) {
-            g2.setColor(Colors.COLOR_BUTTON);
-        } else if (graph.getMark(v) == GraphAlgorithms.GRAY) {
-            g2.setColor(Color.LIGHT_GRAY);
-        } else {
-            g2.setColor(Color.WHITE);
-        }
-        g2.fillOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
-
-        g2.setColor(Colors.COLOR_BUTTON.darker());
-        g2.setStroke(new BasicStroke(2.0f));
-        g2.drawOval(x, y, NODE_DIAMETER, NODE_DIAMETER);
-
-        if (graph.getMark(v) == GraphAlgorithms.BLACK) {
-            g2.setColor(Color.WHITE);
-        } else {
-            g2.setColor(Colors.COLOR_BUTTON.darker());
-        }
-
-        g2.setFont(FontUtil.loadFont( 14, "Inter_Thin_Italic"));
-
-        String text = String.valueOf(v);
-        FontMetrics fm = g2.getFontMetrics();
-
-        int textX = x + (NODE_DIAMETER - fm.stringWidth(text)) / 2;
-        int textY = y + (NODE_DIAMETER + fm.getAscent()) / 2 - 2;
-
-        g2.drawString(text, textX, textY);
+        scaledDirty = false;
     }
 }

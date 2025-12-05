@@ -96,27 +96,15 @@ public class MapPanel extends JPanel {
         if (imageUrl != null) {
             try {
                 backgroundImage = ImageIO.read(imageUrl);
-                if (backgroundImage == null) {
-                    System.err.println("La imagen se cargó pero es null: " + IMAGE_PATH);
-                } else {
-                    Dimension imgDim = new Dimension(backgroundImage.getWidth(this), backgroundImage.getHeight(this));
-                    graphPanel.setPreferredSize(imgDim);
-                    graphPanel.setMapOriginalSize(imgDim);
-                    setPreferredSize(imgDim);
+                Dimension imgDim = new Dimension(backgroundImage.getWidth(this), backgroundImage.getHeight(this));
+                graphPanel.setPreferredSize(imgDim);
+                graphPanel.setMapOriginalSize(imgDim);
+                setPreferredSize(imgDim);
 
-                    mapOriginalSize = imgDim;
-                    if (mapOriginalSize.height > 0) {
-                        mapAspect = mapOriginalSize.getWidth() / (double) mapOriginalSize.getHeight();
-                    }
-                }
+                mapOriginalSize = imgDim;
+                mapAspect = mapOriginalSize.getWidth() / (double) mapOriginalSize.getHeight();
             } catch (IOException ex) {
                 System.err.println("Error al cargar la imagen" + ex.getMessage());
-            }
-        } else {
-            System.err.println("Imagen no encontrado en classpath: " + IMAGE_PATH);
-            mapOriginalSize = getPreferredSize();
-            if (mapOriginalSize.height > 0) {
-                mapAspect = mapOriginalSize.getWidth() / (double) mapOriginalSize.getHeight();
             }
         }
 

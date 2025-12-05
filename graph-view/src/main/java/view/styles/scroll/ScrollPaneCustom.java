@@ -43,6 +43,7 @@ public class ScrollPaneCustom extends JScrollPane {
         horizontal.setOpaque(true);
         vertical.setVisible(true);
         horizontal.setVisible(true);
+        setBorder(null);
 
         Dimension prefV = vertical.getPreferredSize();
         int minWidth = Math.max(prefV.width, 12);

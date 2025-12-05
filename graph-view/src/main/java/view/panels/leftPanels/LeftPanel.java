@@ -11,7 +11,6 @@ public class LeftPanel extends JPanel {
         setLayout(new BorderLayout());
 
         mapPanel = new MapPanel();
-        add(mapPanel, BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel();
         southPanel.setOpaque(false);
@@ -22,7 +21,7 @@ public class LeftPanel extends JPanel {
         controlsWrapper.add(controlsPanel);
 
         southPanel.add(controlsWrapper, BorderLayout.NORTH);
-
+        add(mapPanel, BorderLayout.CENTER);
         add(southPanel, BorderLayout.SOUTH);
     }
 

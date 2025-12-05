@@ -16,7 +16,7 @@ public class TextAreaCustom extends JTextArea {
         setLineWrap(true);
         setWrapStyleWord(true);
         setBorder(new EmptyBorder(10, 10, 10, 10));
-        setBorder(new RoundBorder(20, Color.white));
+        setBorder(null);
     }
 
     @Override
