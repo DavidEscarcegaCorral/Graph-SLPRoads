@@ -21,32 +21,37 @@ public class ScrollPaneCustom extends JScrollPane {
     }
 
     private void aplicarEstilo() {
+        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
         setOpaque(false);
         getViewport().setOpaque(false);
 
         JScrollBar vertical = getVerticalScrollBar();
         JScrollBar horizontal = getHorizontalScrollBar();
 
-        vertical.setOpaque(true);
-        horizontal.setOpaque(true);
-
         vertical.setUnitIncrement(20);
         horizontal.setUnitIncrement(20);
         setBorder(null);
 
-        ScrollBarCustom miUI = new ScrollBarCustom();
-        vertical.setUI(miUI);
-        horizontal.setUI(miUI);
+        vertical.setUI(new ScrollBarCustom());
+        horizontal.setUI(new ScrollBarCustom());
 
-        // Forzar tamaño visible de la barra vertical y colores de track
-        int ancho = miUI.getPreferredSize(vertical).width;
-        vertical.setPreferredSize(new Dimension(Math.max(ancho, 12), vertical.getPreferredSize().height));
-        vertical.setBackground(new Color(240, 240, 240));
-        horizontal.setBackground(new Color(240, 240, 240));
-
+        vertical.setOpaque(true);
+        horizontal.setOpaque(true);
         vertical.setVisible(true);
+        horizontal.setVisible(true);
+
+        Dimension prefV = vertical.getPreferredSize();
+        int minWidth = Math.max(prefV.width, 12);
+        vertical.setPreferredSize(new Dimension(minWidth, prefV.height));
+        Dimension prefH = horizontal.getPreferredSize();
+        int minHeight = Math.max(prefH.height, 12);
+        horizontal.setPreferredSize(new Dimension(prefH.width, minHeight));
 
         this.setBorder(BorderFactory.createEmptyBorder());
 
+        revalidate();
+        repaint();
     }
 }

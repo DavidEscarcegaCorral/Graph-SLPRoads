@@ -22,8 +22,7 @@ public class MainFrame extends JFrame {
     }
 
     public void setMainPanel(MainAppPanel mainAppPanel) {
-        // Deshabilitar scroll horizontal
-        scrollCustom = new ScrollPaneCustom(mainAppPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollCustom = new ScrollPaneCustom(mainAppPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollCustom);
     }
 }

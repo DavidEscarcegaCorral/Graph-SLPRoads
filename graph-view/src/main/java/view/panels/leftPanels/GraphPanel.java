@@ -17,7 +17,6 @@ public class GraphPanel extends JPanel implements IVisualizer {
     private final IGraph graph;
     private final Point[] positions;
     private boolean[][] visitedEdges;
-    private JTextArea logArea;
     private Dimension originalMapSize = null;
 
     private static final int NODE_DIAMETER = 30;
@@ -86,10 +85,6 @@ public class GraphPanel extends JPanel implements IVisualizer {
         }
     }
 
-    public void setLogArea(JTextArea area) {
-        this.logArea = area;
-    }
-
     public void setMapOriginalSize(Dimension orig) {
         this.originalMapSize = orig;
     }
@@ -117,12 +112,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
     @Override
     public void pauseAndRedraw(String message, int milliseconds) {
         if (SwingUtilities.isEventDispatchThread()) {
-            if (message != null) {
-                if (logArea != null) {
-                    logArea.append(message + "\n");
-                    logArea.setCaretPosition(logArea.getDocument().getLength());
-                }
-            }
+            if (message != null) System.out.println(message);
             this.repaint();
             try { Thread.sleep(Math.max(0, milliseconds)); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); }
             return;
@@ -131,12 +121,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
         final CountDownLatch latch = new CountDownLatch(1);
 
         SwingUtilities.invokeLater(() -> {
-            if (message != null) {
-                if (logArea != null) {
-                    logArea.append(message + "\n");
-                    logArea.setCaretPosition(logArea.getDocument().getLength());
-                }
-            }
+            if (message != null) System.out.println(message);
             this.repaint();
 
             if (milliseconds <= 0) {
