@@ -7,7 +7,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
 public class ScrollBarCustom extends BasicScrollBarUI {
-    private final Color colorThumb = Colors.COLOR_BUTTON;
+    private final Color colorThumb = new Color(130, 130, 130);
     private final Color colorTrack = new Color(240, 240, 240);
     private final int anchoBarra = 12;
 

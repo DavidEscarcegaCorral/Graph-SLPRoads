@@ -24,13 +24,13 @@ public class RightPanel extends JPanel {
         thirdPanel = new JPanel();
         thirdPanel.setOpaque(false);
 
-        // Añadir componetnes
         firstPanel.add(headerMenuPanel);
 
         add(Box.createVerticalStrut(20));
         add(firstPanel);
         add(secondPanel);
         add(thirdPanel);
+        add(Box.createVerticalStrut(10));
     }
 
     public JPanel getFirstPanel() {
@@ -44,4 +44,5 @@ public class RightPanel extends JPanel {
     public JPanel getThirdPanel() {
         return thirdPanel;
     }
+
 }

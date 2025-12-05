@@ -51,7 +51,6 @@ public class GraphAlgorithms {
         try {
             synchronized (lock) {
                 while (isPaused) {
-                    System.out.println("Algoritmo pausado.");
                     lock.wait();
                 }
             }
@@ -86,12 +85,6 @@ public class GraphAlgorithms {
         System.out.println("Recorrido desde " + startNode + " completado.");
     }
 
-    /**
-     * Metodo recursivo para el algoritmo DFS.
-     *
-     * @param visual El objeto de la GUI que implementa IVisualizer.
-     * @param vertex El vértice actual que está siendo explorado.
-     */
     private static void DFS(IVisualizer visual, int vertex) {
         IGraph graph = visual.getGraph();
 
@@ -265,7 +258,6 @@ public class GraphAlgorithms {
         int n = graph.vertexCount();
         UnionFind uf = new UnionFind(n);
 
-        // 1. Recolectar todas las aristas
         List<EdgeContext> allEdges = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
@@ -341,7 +333,6 @@ public class GraphAlgorithms {
         return mstWeight;
     }
 
-
     static class NodeDist implements Comparable<NodeDist> {
         int node;
         int dist;
@@ -357,38 +348,50 @@ public class GraphAlgorithms {
         }
     }
 
-    public static int runDijkstra(IVisualizer visual, int startNode, int endNode) {
+    public static class ShortestPathResult {
+        public final int finalDistance;
+        public final List<int[]> snapshots;
+
+        public ShortestPathResult(int finalDistance, List<int[]> snapshots) {
+            this.finalDistance = finalDistance;
+            this.snapshots = snapshots;
+        }
+    }
+
+    public static ShortestPathResult runDijkstraWithEvolution(IVisualizer visual, int startNode, int endNode) {
         if (isPaused) resumeAlgorithm();
 
         IGraph graph = visual.getGraph();
         int n = graph.vertexCount();
+
+        if (startNode < 0 || startNode >= n || endNode < 0 || endNode >= n) {
+            visual.pauseAndRedraw("Dijkstra: nodos fuera de rango.", 0);
+            return new ShortestPathResult(Integer.MAX_VALUE, Collections.emptyList());
+        }
 
         visual.pauseAndRedraw(
                 " Iniciando Dijkstra: calculando la ruta más corta desde el nodo " + startNode + " hasta el nodo " + endNode, 800);
 
         int[] dist = new int[n];
         int[] parent = new int[n];
-        boolean[] visited = new boolean[n];
 
-        for (int i = 0; i < n; i++) {
-            dist[i] = Integer.MAX_VALUE;
-            parent[i] = -1;
-            visited[i] = false;
-        }
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        Arrays.fill(parent, -1);
 
         dist[startNode] = 0;
 
         PriorityQueue<NodeDist> pq = new PriorityQueue<>();
         pq.add(new NodeDist(startNode, 0));
 
+        List<int[]> snapshots = new ArrayList<>();
+        snapshots.add(Arrays.copyOf(dist, n));
+
         while (!pq.isEmpty()) {
             NodeDist current = pq.poll();
             int u = current.node;
 
-            if (visited[u]) continue;
-            visited[u] = true;
+            if (current.dist != dist[u]) continue;
 
-            graph.setMark(u, BLACK);
             visual.pauseAndRedraw(
                     " Procesando nodo " + u
                             + ". Distancia conocida hasta este nodo: " + dist[u], 500);
@@ -405,10 +408,9 @@ public class GraphAlgorithms {
                         " Evaluando vecino " + v + " desde nodo " + u
                                 + ". Peso de la arista: " + weight, 300);
 
-                if (!visited[v] && dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
+                if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
                     dist[v] = dist[u] + weight;
                     parent[v] = u;
-
                     pq.add(new NodeDist(v, dist[v]));
 
                     graph.setMark(v, GRAY);
@@ -417,6 +419,8 @@ public class GraphAlgorithms {
                             "Distancia mejorada a nodo " + v
                                     + " vía nodo " + u + ". Nueva distancia mínima: " + dist[v], 300);
                     checkPause();
+
+                    snapshots.add(Arrays.copyOf(dist, n));
                 }
             }
 
@@ -424,15 +428,38 @@ public class GraphAlgorithms {
                     "Nodo " + u + " completamente procesado. Todos sus vecinos han sido evaluados.", 500);
         }
 
+        if (dist[endNode] == Integer.MAX_VALUE) {
+            visual.pauseAndRedraw("Dijkstra completado. Nodo destino inalcanzable.", 0);
+            return new ShortestPathResult(Integer.MAX_VALUE, snapshots);
+        }
+
+        List<Integer> path = new ArrayList<>();
+        for (int cur = endNode; cur != -1; cur = parent[cur]) {
+            path.add(cur);
+        }
+        Collections.reverse(path);
+
+        for (int nodeId : path) {
+            graph.setMark(nodeId, BLACK);
+        }
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            int a = path.get(i);
+            int b = path.get(i + 1);
+            visual.markEdge(a, b, true);
+            visual.pauseAndRedraw("Ruta: " + a + " -> " + b, 300);
+            checkPause();
+        }
+
         visual.pauseAndRedraw(
                 "Dijkstra completado. Distancia más corta desde nodo "
                         + startNode + " hasta nodo " + endNode + " = " + dist[endNode], 0);
 
-        return dist[endNode];
+        snapshots.add(Arrays.copyOf(dist, n));
+        return new ShortestPathResult(dist[endNode], snapshots);
     }
 
-
-    public static int runBellmanFord(IVisualizer visual, int startNode, int endNode) {
+    public static ShortestPathResult runBellmanFordWithEvolution(IVisualizer visual, int startNode, int endNode) {
         if (isPaused) resumeAlgorithm();
 
         IGraph graph = visual.getGraph();
@@ -456,6 +483,9 @@ public class GraphAlgorithms {
                 edges.add(new EdgeContext(u, v, graph.weight(u, v)));
             }
         }
+
+        List<int[]> snapshots = new ArrayList<>();
+        snapshots.add(Arrays.copyOf(dist, n));
 
         for (int i = 1; i < n; i++) {
             visual.pauseAndRedraw("Iteración " + i + " de relajación de todas las aristas...", 700);
@@ -484,6 +514,8 @@ public class GraphAlgorithms {
                 }
             }
 
+            snapshots.add(Arrays.copyOf(dist, n));
+
             if (!changed) {
                 visual.pauseAndRedraw(" No se actualizaron distancias en esta iteración. Terminando temprano.", 600);
                 break;
@@ -497,7 +529,7 @@ public class GraphAlgorithms {
 
             if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
                 visual.pauseAndRedraw("Ciclo negativo detectado en la arista " + u + " → " + v + ". No existe solución válida.", 1500);
-                return Integer.MIN_VALUE;
+                return new ShortestPathResult(Integer.MIN_VALUE, snapshots);
             }
         }
 
@@ -511,9 +543,17 @@ public class GraphAlgorithms {
                 "Bellman-Ford completado. Distancia mínima desde nodo "
                         + startNode + " hasta nodo " + endNode + " = " + dist[endNode], 0);
 
-        return dist[endNode];
+        snapshots.add(Arrays.copyOf(dist, n));
+        return new ShortestPathResult(dist[endNode], snapshots);
     }
 
+    public static int runDijkstra(IVisualizer visual, int startNode, int endNode) {
+        return runDijkstraWithEvolution(visual, startNode, endNode).finalDistance;
+    }
+
+    public static int runBellmanFord(IVisualizer visual, int startNode, int endNode) {
+        return runBellmanFordWithEvolution(visual, startNode, endNode).finalDistance;
+    }
 
     private static void addEdgesToPQ(IGraph graph, int u, PriorityQueue<EdgeContext> pq, boolean[] inMST) {
         for (int v = graph.firstNeighbor(u); v < graph.vertexCount(); v = graph.nextNeighbor(u, v)) {

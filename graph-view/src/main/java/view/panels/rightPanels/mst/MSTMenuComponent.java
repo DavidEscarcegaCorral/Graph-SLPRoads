@@ -1,10 +1,11 @@
 package view.panels.rightPanels.mst;
 
+import view.styles.*;
 import view.styles.Button;
-import view.styles.Colors;
-import view.styles.CustomRadioButton;
-import view.styles.FontUtil;
+import view.styles.scroll.ScrollPaneCustom;
 import view.styles.textFields.TxtFieldPh;
+import view.utils.ConsoleTee;
+import view.control.AlgorithmCategory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +31,7 @@ public class MSTMenuComponent extends JPanel {
 
     public MSTMenuComponent() {
         setOpaque(false);
-        setPreferredSize(new Dimension(700, 340));
+        setPreferredSize(new Dimension(700, 500));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -52,9 +53,9 @@ public class MSTMenuComponent extends JPanel {
         p3.setMaximumSize(new Dimension(700, 60));
         p3.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 5));
 
-        p4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p4 = new JPanel(new BorderLayout());
         p4.setOpaque(false);
-        p4.setMaximumSize(new Dimension(700, 50));
+        p4.setMaximumSize(new Dimension(700, 360));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
         JLabel titleLbL = new JLabel("Árbol de expansion minima");
@@ -88,7 +89,29 @@ public class MSTMenuComponent extends JPanel {
         p2.add(lbl1);
         p3.add(textField);
         p3.add(citiesBtn);
-        p4.add(finalWeightLbl);
+
+        TextAreaCustom consoleArea = new TextAreaCustom(10, 20);
+        ScrollPaneCustom scroll = new ScrollPaneCustom(consoleArea);
+
+        p4.add(scroll, BorderLayout.CENTER);
+
+        ConsoleTee.getInstance().register(consoleArea, AlgorithmCategory.MST);
+
+        JPanel southPanel = new JPanel(new BorderLayout());
+        southPanel.setOpaque(false);
+        southPanel.add(finalWeightLbl, BorderLayout.WEST);
+        Button clearBtn = new Button("Limpiar", 100, 30, 16, 8, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        clearBtn.addActionListener(ev -> {
+            consoleArea.setText("");
+            ConsoleTee.getInstance().clearChannel(AlgorithmCategory.MST);
+        });
+
+        JPanel btnWrapPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
+        btnWrapPanel.setOpaque(false);
+        btnWrapPanel.add(clearBtn);
+        southPanel.add(btnWrapPanel, BorderLayout.EAST);
+
+        p4.add(southPanel, BorderLayout.SOUTH);
 
         add(titlePanel);
         add(p1);
@@ -97,21 +120,6 @@ public class MSTMenuComponent extends JPanel {
         add(p4);
     }
 
-    public CustomRadioButton getRbtn1() {
-        return rbtn1;
-    }
-
-    public CustomRadioButton getRbtn2() {
-        return rbtn2;
-    }
-
-    public JLabel getLbl1() {
-        return lbl1;
-    }
-
-    public JLabel getFinalWeightLbl() {
-        return finalWeightLbl;
-    }
 
     public TxtFieldPh getTextField() {
         return textField;
