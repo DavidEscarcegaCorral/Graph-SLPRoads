@@ -150,16 +150,14 @@ public class GraphPanel extends JPanel implements IVisualizer {
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(2.5f)); // un poco más grueso para que se note sobre el mapa
+        g2.setStroke(new BasicStroke(2.5f));
 
-        // calcular factores de escala
         double sx = 1.0, sy = 1.0;
         if (originalMapSize != null && originalMapSize.width > 0 && originalMapSize.height > 0) {
             sx = (double) getWidth() / originalMapSize.width;
             sy = (double) getHeight() / originalMapSize.height;
         }
 
-        // Dibuja aristas con posiciones escaladas
         for (int source = 0; source < graph.vertexCount(); source++) {
             for (int dest = 0; dest < graph.vertexCount(); dest++) {
                 if (graph.isEdge(source, dest)) {
@@ -189,7 +187,6 @@ public class GraphPanel extends JPanel implements IVisualizer {
     }
 
     private void drawNode(Graphics2D g2, int v, double sx, double sy) {
-        // Relleno con color contrastante para que sea visible sobre el mapa
         if (graph.getMark(v) == GraphAlgorithms.BLACK) {
             g2.setColor(Colors.COLOR_BUTTON);
         } else if (graph.getMark(v) == GraphAlgorithms.GRAY) {

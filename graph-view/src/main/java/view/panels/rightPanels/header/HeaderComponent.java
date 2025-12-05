@@ -9,29 +9,36 @@ import java.awt.*;
 public class HeaderComponent extends JPanel {
     private Button aboutGraphBtn;
     private Button aboutProyectBtn;
+    private Button inicioBtn;
 
     public HeaderComponent() {
         setOpaque(false);
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        setPreferredSize(new Dimension(500, 55));
+        setPreferredSize(new Dimension(600, 55));
 
-        aboutGraphBtn = new Button("Sobre los grafos", 200, 35, 15, 0, Color.black, Colors.COLOR_HEADER,
+        aboutGraphBtn = new Button("Sobre los grafos", 200, 35, 15, 5, Color.black, Colors.COLOR_HEADER,
                 Colors.COLOR_HEADER_HOOVER);
         aboutGraphBtn.setNewFont(18, "Inter_Regular");
-        aboutProyectBtn = new Button("Sobre el proyecto", 200, 35, 15, 0, Color.black, Colors.COLOR_HEADER,
+        aboutProyectBtn = new Button("Sobre el proyecto", 200, 35, 15, 5, Color.black, Colors.COLOR_HEADER,
                 Colors.COLOR_HEADER_HOOVER);
         aboutProyectBtn.setNewFont(18, "Inter_Regular");
-        aboutGraphBtn.addActionListener(e -> {
 
-        });
-        aboutProyectBtn.addActionListener(e -> {
+        inicioBtn = new Button("Inicio", 120, 35, 15, 5, Color.black, Colors.COLOR_HEADER, Colors.COLOR_HEADER_HOOVER);
+        inicioBtn.setNewFont(18, "Inter_Regular");
 
-        });
+        aboutGraphBtn.addActionListener(e -> {});
+        aboutProyectBtn.addActionListener(e -> {});
 
+        add(inicioBtn);
         add(aboutGraphBtn);
         add(aboutProyectBtn);
+
     }
+
+    public Button getAboutGraphBtn() { return aboutGraphBtn; }
+    public Button getAboutProyectBtn() { return aboutProyectBtn; }
+    public Button getInicioBtn() { return inicioBtn; }
 
     @Override
     protected void paintComponent(Graphics g) {

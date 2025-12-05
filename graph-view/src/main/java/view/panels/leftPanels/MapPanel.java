@@ -175,7 +175,7 @@ public class MapPanel extends JPanel {
 
                 for (NodeJson nj : arr) {
                     NodeInfo ni = new NodeInfo();
-                    ni.numero = numToIndex.get(nj.numeroNodo); // índice compacto
+                    ni.numero = numToIndex.get(nj.numeroNodo);
                     ni.nombre = nj.nombre;
                     ni.x = nj.x;
                     ni.y = nj.y;

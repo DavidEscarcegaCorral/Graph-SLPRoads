@@ -9,7 +9,6 @@ public class RightPanel extends JPanel {
     private JPanel firstPanel;
     private JPanel secondPanel;
     private JPanel thirdPanel;
-    private JPanel logCardPanel; // panel con CardLayout
 
     public RightPanel(HeaderMenuPanel headerMenuPanel) {
         setOpaque(false);
@@ -25,20 +24,6 @@ public class RightPanel extends JPanel {
         thirdPanel = new JPanel();
         thirdPanel.setOpaque(false);
 
-        // CardLayout para posibles tarjetas (sin áreas de texto)
-        logCardPanel = new JPanel(new CardLayout());
-        JPanel placeholder = new JPanel();
-        placeholder.setOpaque(false);
-        placeholder.setPreferredSize(new Dimension(600, 150));
-        logCardPanel.add(placeholder, "PLACEHOLDER");
-
-        JPanel logWrapper = new JPanel(new BorderLayout());
-        logWrapper.setOpaque(false);
-        JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        center.setOpaque(false);
-        center.add(logCardPanel);
-        logWrapper.add(center, BorderLayout.CENTER);
-
         firstPanel.add(headerMenuPanel);
 
         add(Box.createVerticalStrut(20));
@@ -46,7 +31,6 @@ public class RightPanel extends JPanel {
         add(secondPanel);
         add(thirdPanel);
         add(Box.createVerticalStrut(10));
-        add(logWrapper);
     }
 
     public JPanel getFirstPanel() {
@@ -61,9 +45,4 @@ public class RightPanel extends JPanel {
         return thirdPanel;
     }
 
-    public void showLogCard(String key) {
-        if (logCardPanel == null) return;
-        CardLayout cl = (CardLayout) logCardPanel.getLayout();
-        cl.show(logCardPanel, key);
-    }
 }

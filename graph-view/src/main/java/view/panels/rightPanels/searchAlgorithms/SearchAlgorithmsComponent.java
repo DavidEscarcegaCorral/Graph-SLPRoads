@@ -74,6 +74,10 @@ public class SearchAlgorithmsComponent extends JPanel {
         lbl2.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         lbl2.setForeground(Color.BLACK);
 
+        rbtn1.setSelected(true);
+        rbtn1.addActionListener(e -> updateComplexityLabel());
+        rbtn2.addActionListener(e -> updateComplexityLabel());
+
         textField = new TxtFieldPh("Ciudad o No. de nodo", 220, 40, 16);
         citiesBtn = new Button("Ver ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
@@ -91,6 +95,17 @@ public class SearchAlgorithmsComponent extends JPanel {
         add(p3);
         add(p4);
 
+        updateComplexityLabel();
+    }
+
+    private void updateComplexityLabel() {
+        if (rbtn1.isSelected()) {
+            lbl2.setText("Complejidad temporal: O(V + E) — BFS");
+        } else if (rbtn2.isSelected()) {
+            lbl2.setText("Complejidad temporal: O(V + E) — DFS");
+        } else {
+            lbl2.setText("Complejidad temporal: O(V + E)");
+        }
     }
 
     public CustomRadioButton getRbtn2() {

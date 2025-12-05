@@ -83,6 +83,11 @@ public class ViewControl {
 
         rightPanel = new RightPanel(headerMenuPanel);
 
+        // Conectar botones del header para mostrar paneles vacíos en el panel derecho
+        headerMenuPanel.getHeaderPanel().getAboutGraphBtn().addActionListener(e -> showInfoPanel("Sobre los grafos"));
+        headerMenuPanel.getHeaderPanel().getAboutProyectBtn().addActionListener(e -> showInfoPanel("Sobre el proyecto"));
+        headerMenuPanel.getHeaderPanel().getInicioBtn().addActionListener(e -> showWelcomeView());
+
         // Panel Izquierdo
         controlsPanel = new ControlsPanel();
         leftPanel = new LeftPanel(controlsPanel);
@@ -137,8 +142,7 @@ public class ViewControl {
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
 
-        // Mostrar la tarjeta correspondiente
-        rightPanel.showLogCard(newCategory == AlgorithmCategory.SEARCH ? "PLACEHOLDER" : "PLACEHOLDER");
+        // No usamos tarjetas (CardPanel) en el RightPanel; mostramos directamente el componente correspondiente
 
         switch (newCategory) {
             case SEARCH:
@@ -155,6 +159,29 @@ public class ViewControl {
 
         controlsPanel.getPlayBtn().setEnabled(true);
         controlsPanel.getRestartBtn().setEnabled(true);
+
+        container.revalidate();
+        container.repaint();
+    }
+
+    private void showInfoPanel(String title) {
+        JPanel container = rightPanel.getSecondPanel();
+        container.removeAll();
+        // Limpiar tambien el tercer panel
+        rightPanel.getThirdPanel().removeAll();
+
+        JPanel p = new JPanel(new BorderLayout());
+        p.setOpaque(false);
+        JLabel lbl = new JLabel("<html><center><h2>" + title + "</h2></center></html>");
+        lbl.setHorizontalAlignment(SwingConstants.CENTER);
+        p.add(lbl, BorderLayout.CENTER);
+
+        container.add(p, BorderLayout.CENTER);
+
+        // Desactivar controles mientras se muestra info
+        controlsPanel.getPlayBtn().setEnabled(false);
+        controlsPanel.getPauseBtn().setEnabled(false);
+        controlsPanel.getRestartBtn().setEnabled(false);
 
         container.revalidate();
         container.repaint();
