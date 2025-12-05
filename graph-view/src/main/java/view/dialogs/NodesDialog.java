@@ -2,7 +2,7 @@ package view.dialogs;
 
 import view.MainFrame;
 import view.panels.leftPanels.MapPanel;
-import view.styles.Table;
+import view.styles.CustomTable;
 import view.styles.scroll.ScrollPaneCustom;
 import view.styles.Button;
 import view.styles.Colors;
@@ -33,11 +33,11 @@ public class NodesDialog extends JDialog {
             }
         }
 
-        Table table = new Table(model);
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(26);
+        CustomTable customTable = new CustomTable(model);
+        customTable.setFillsViewportHeight(true);
+        customTable.setRowHeight(26);
 
-        ScrollPaneCustom sp = new ScrollPaneCustom(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        ScrollPaneCustom sp = new ScrollPaneCustom(customTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         sp.setPreferredSize(new Dimension(660, 300));
 
         JPanel p = new JPanel(new BorderLayout());

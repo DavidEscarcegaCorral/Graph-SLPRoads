@@ -1,13 +1,15 @@
 package view.panels.rightPanels.shortestPath;
 
+import view.styles.*;
 import view.styles.Button;
-import view.styles.Colors;
-import view.styles.CustomRadioButton;
-import view.styles.FontUtil;
+import view.styles.scroll.ScrollPaneCustom;
 import view.styles.textFields.TxtFieldPh;
+import view.utils.ConsoleTee;
+import view.control.AlgorithmCategory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class ShortestPathComponent extends JPanel {
     private ButtonGroup buttonGroup;
@@ -25,12 +27,12 @@ public class ShortestPathComponent extends JPanel {
     private JPanel titlePanel;
     private JPanel p1;
     private JPanel p2;
-    private JPanel p3;
+    private final JPanel p3;
     private JPanel p4;
 
     public ShortestPathComponent() {
         setOpaque(false);
-        setPreferredSize(new Dimension(700, 340));
+        setPreferredSize(new Dimension(700, 560));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -52,9 +54,9 @@ public class ShortestPathComponent extends JPanel {
         p3.setMaximumSize(new Dimension(700, 60));
         p3.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        p4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p4 = new JPanel(new BorderLayout());
         p4.setOpaque(false);
-        p4.setMaximumSize(new Dimension(700, 50));
+        p4.setMaximumSize(new Dimension(700, 360));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         JLabel titleLbL = new JLabel("Calculo de ruta más corta");
@@ -87,7 +89,30 @@ public class ShortestPathComponent extends JPanel {
         p3.add(textFieldOrigen);
         p3.add(textFieldDestino);
         p3.add(citiesBtn);
-        p4.add(totalDistanceLbl);
+
+        TextAreaCustom consoleArea = new TextAreaCustom(10, 20);
+        ScrollPaneCustom scroll = new ScrollPaneCustom(consoleArea);
+
+        p4.add(scroll, BorderLayout.CENTER);
+
+        ConsoleTee.getInstance().register(consoleArea, AlgorithmCategory.SHORTEST_PATH);
+
+        JPanel southPanel = new JPanel(new BorderLayout());
+
+        southPanel.setOpaque(false);
+        southPanel.add(totalDistanceLbl, BorderLayout.WEST);
+        Button clearBtn = new Button("Limpiar", 100, 30, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        clearBtn.addActionListener(ev -> {
+            consoleArea.setText("");
+            ConsoleTee.getInstance().clearChannel(AlgorithmCategory.SHORTEST_PATH);
+            setTotalDistanceText("Distancia total: ");
+        });
+        JPanel btnWrapPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
+        btnWrapPanel.setOpaque(false);
+        btnWrapPanel.add(clearBtn);
+        southPanel.add(btnWrapPanel, BorderLayout.EAST);
+
+        p4.add(southPanel, BorderLayout.SOUTH);
 
         add(titlePanel);
         add(p1);
@@ -108,22 +133,16 @@ public class ShortestPathComponent extends JPanel {
         return textFieldOrigen;
     }
 
-    public void setWeight(int peso) {
-        if (peso == -1) {
-            totalDistanceLbl.setText("Distancia total: ");
-        } else {
-            totalDistanceLbl.setText("Distancia total: " + peso);
-        }
-        totalDistanceLbl.revalidate();
-        totalDistanceLbl.repaint();
-    }
-
     public boolean isBellmanFordSelected() {
         return  rbtn1.isSelected();
     }
 
     public boolean isDijkstraSelected() {
         return  rbtn2.isSelected();
+    }
+
+    public void setTotalDistanceText(String text) {
+        SwingUtilities.invokeLater(() -> totalDistanceLbl.setText(text));
     }
 
 }

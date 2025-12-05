@@ -1,5 +1,8 @@
 package view.styles.scroll;
 
+import view.styles.Colors;
+import view.styles.RoundBorder;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -32,7 +35,6 @@ public class ScrollPaneCustom extends JScrollPane {
 
         vertical.setUnitIncrement(20);
         horizontal.setUnitIncrement(20);
-        setBorder(null);
 
         vertical.setUI(new ScrollBarCustom());
         horizontal.setUI(new ScrollBarCustom());
@@ -48,8 +50,6 @@ public class ScrollPaneCustom extends JScrollPane {
         Dimension prefH = horizontal.getPreferredSize();
         int minHeight = Math.max(prefH.height, 12);
         horizontal.setPreferredSize(new Dimension(prefH.width, minHeight));
-
-        this.setBorder(BorderFactory.createEmptyBorder());
 
         revalidate();
         repaint();

@@ -8,10 +8,10 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import java.awt.*;
 
-public class Table extends JTable {
+public class CustomTable extends JTable {
     private MainFrame owner;
 
-    public Table(TableModel model) {
+    public CustomTable(TableModel model) {
         super(model);
         configStyle();
 

@@ -13,7 +13,6 @@ public class LeftPanel extends JPanel {
         mapPanel = new MapPanel();
         add(mapPanel, BorderLayout.CENTER);
 
-        // Panel sur que contiene únicamente los controles
         JPanel southPanel = new JPanel();
         southPanel.setOpaque(false);
         southPanel.setLayout(new BorderLayout());

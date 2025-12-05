@@ -1,6 +1,7 @@
 package view.control;
 
 import algorithms.GraphAlgorithms;
+import algorithms.GraphAlgorithms.ShortestPathResult;
 import view.MainFrame;
 import view.panels.leftPanels.ControlsPanel;
 import view.panels.leftPanels.GraphPanel;
@@ -8,8 +9,10 @@ import view.panels.leftPanels.MapPanel;
 import view.panels.rightPanels.mst.MSTMenuComponent;
 import view.panels.rightPanels.searchAlgorithms.SearchAlgorithmsComponent;
 import view.panels.rightPanels.shortestPath.ShortestPathComponent;
+import view.utils.ConsoleTee;
 
 import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 
 public class AlgorithmsControl {
     private final MainFrame mainFrame;
@@ -59,7 +62,6 @@ public class AlgorithmsControl {
      * Inicia la simulación basada en la categoría actual que le pasa el ViewControl.
      */
     public void startSimulation(AlgorithmCategory currentCategory) {
-        // Validaciones
         if (currentCategory == null) {
             JOptionPane.showMessageDialog(mainFrame,
                     "Por favor seleccione una categoría del menú primero.",
@@ -94,6 +96,25 @@ public class AlgorithmsControl {
 
         if (!isValid) return;
 
+        // Reseteo visual específico para rutas más cortas: limpiamos la vista antes de ejecutar
+        if (currentCategory == AlgorithmCategory.SHORTEST_PATH) {
+            // Aseguramos que el reset se ejecute y termine antes de iniciar el algoritmo
+            if (SwingUtilities.isEventDispatchThread()) {
+                graphPanel.resetVisuals();
+            } else {
+                try {
+                    SwingUtilities.invokeAndWait(() -> graphPanel.resetVisuals());
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainFrame, "Reset de vista interrumpido."));
+                    return;
+                } catch (InvocationTargetException ite) {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainFrame, "Error al resetear la vista: " + ite.getCause()));
+                    return;
+                }
+            }
+        }
+
         controlsPanel.getPlayBtn().setEnabled(false);
         controlsPanel.getRestartBtn().setEnabled(false);
         controlsPanel.getPauseBtn().setEnabled(true);
@@ -104,14 +125,16 @@ public class AlgorithmsControl {
         final int finalStartNode = startNode;
         final int finalEndNode = endNode;
 
+        // Control de la impresion en el textArea
+        ConsoleTee.getInstance().setActiveChannel(currentCategory);
+        ConsoleTee.getInstance().clearChannel(currentCategory);
+
         new Thread(() -> {
             try {
                 int finalWeight = runLogic(currentCategory, finalStartNode, finalEndNode);
-                System.out.println("DEBUG CONTROLADOR: El algoritmo retornó peso = " + finalWeight);
 
                 if (currentCategory == AlgorithmCategory.MST) {
                     SwingUtilities.invokeLater(() -> {
-                        System.out.println("DEBUG CONTROLADOR: Enviando a la vista...");
                         mstPanel.setWeight(finalWeight);
                     });
                 }
@@ -121,7 +144,10 @@ public class AlgorithmsControl {
                         JOptionPane.showMessageDialog(mainFrame, "Error inesperado: " + e.getMessage())
                 );
             } finally {
-                SwingUtilities.invokeLater(this::restoreControlButtons);
+                SwingUtilities.invokeLater(() -> {
+                    restoreControlButtons();
+                    ConsoleTee.getInstance().setActiveChannel(null);
+                });
             }
         }).start();
     }
@@ -149,9 +175,19 @@ public class AlgorithmsControl {
 
             case SHORTEST_PATH:
                 if (shortestPathComponent.isBellmanFordSelected()) {
-                    resultWeight = GraphAlgorithms.runBellmanFord(graphPanel, startNode, endNode);
+                    ShortestPathResult res = GraphAlgorithms.runBellmanFordWithEvolution(graphPanel, startNode, endNode);
+                    resultWeight = res.finalDistance;
+                    final ShortestPathResult finalRes = res;
+                    SwingUtilities.invokeLater(() -> {
+                        shortestPathComponent.setTotalDistanceText("Distancia total: " + (finalRes.finalDistance == Integer.MAX_VALUE ? "∞" : finalRes.finalDistance));
+                    });
                 } else if(shortestPathComponent.isDijkstraSelected()){
-                    resultWeight = GraphAlgorithms.runDijkstra(graphPanel,startNode,endNode);
+                    ShortestPathResult res = GraphAlgorithms.runDijkstraWithEvolution(graphPanel, startNode, endNode);
+                    resultWeight = res.finalDistance;
+                    final ShortestPathResult finalRes = res;
+                    SwingUtilities.invokeLater(() -> {
+                        shortestPathComponent.setTotalDistanceText("Distancia total: " + (finalRes.finalDistance == Integer.MAX_VALUE ? "∞" : finalRes.finalDistance));
+                    });
                 }
                 break;
         }
@@ -179,7 +215,7 @@ public class AlgorithmsControl {
                 return -1;
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(mainFrame, "Ingrese un nodo válido.");
+            JOptionPane.showMessageDialog(mainFrame, "Ingrese un nodo válido.", "Error", JOptionPane.WARNING_MESSAGE);
             return -1;
         }
     }

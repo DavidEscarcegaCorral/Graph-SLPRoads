@@ -2,7 +2,6 @@ package view.panels.leftPanels;
 
 import graphs.GraphM;
 import interfaces.IGraph;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -13,21 +12,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.Normalizer;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.InputStreamReader;
 
-/**
- * Un JPanel personalizado que dibuja una imagen de fondo fija,
- * escalándola para que cubra el componente.
- */
 public class MapPanel extends JPanel {
     private static final String IMAGE_PATH = "/img/mapa-estado-san-luis-potosi-low-detail.png";
     private static final String NODES_JSON_PATH = "/view/control/informacionMapa/nodos.json";
     private Image backgroundImage;
+
+    private Dimension mapOriginalSize = null;
+    private double mapAspect = 0.0;
 
     private final IGraph graph;
     private final GraphPanel graphPanel;
@@ -51,15 +48,12 @@ public class MapPanel extends JPanel {
 
     private List<NodeInfo> nodesLoaded = null;
 
-    /**
-     * Constructor que carga la imagen interna y el JSON de nodos.
-     */
     public MapPanel() {
         setOpaque(true);
         setPreferredSize(new Dimension(800, 600));
 
         List<NodeInfo> nodes = loadNodes();
-        this.nodesLoaded = nodes; // guardar para búsquedas por nombre
+        this.nodesLoaded = nodes;
 
         int nodeCount;
         if (nodes != null && !nodes.isEmpty()) {
@@ -105,21 +99,25 @@ public class MapPanel extends JPanel {
                 if (backgroundImage == null) {
                     System.err.println("La imagen se cargó pero es null: " + IMAGE_PATH);
                 } else {
-                    // Si cargamos la imagen con éxito, ajustamos el preferredSize del graphPanel
                     Dimension imgDim = new Dimension(backgroundImage.getWidth(this), backgroundImage.getHeight(this));
                     graphPanel.setPreferredSize(imgDim);
-                    // pasar el tamaño original del mapa al graphPanel para permitir escalado
-                    if (graphPanel instanceof GraphPanel) {
-                        ((GraphPanel) graphPanel).setMapOriginalSize(imgDim);
-                    }
-                    // También ajustar este panel para reflejar la imagen
+                    graphPanel.setMapOriginalSize(imgDim);
                     setPreferredSize(imgDim);
+
+                    mapOriginalSize = imgDim;
+                    if (mapOriginalSize.height > 0) {
+                        mapAspect = mapOriginalSize.getWidth() / (double) mapOriginalSize.getHeight();
+                    }
                 }
             } catch (IOException ex) {
                 System.err.println("Error al cargar la imagen" + ex.getMessage());
             }
         } else {
             System.err.println("Imagen no encontrado en classpath: " + IMAGE_PATH);
+            mapOriginalSize = getPreferredSize();
+            if (mapOriginalSize.height > 0) {
+                mapAspect = mapOriginalSize.getWidth() / (double) mapOriginalSize.getHeight();
+            }
         }
 
         setLayout(new BorderLayout());
@@ -130,9 +128,6 @@ public class MapPanel extends JPanel {
         return graphPanel;
     }
 
-    /**
-     * Sobrescribe el metodo paintComponent para dibujar la imagen de fondo.
-     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -153,10 +148,32 @@ public class MapPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
+        if (mapOriginalSize != null) {
+            return new Dimension(mapOriginalSize);
+        }
         if (backgroundImage != null) {
             return new Dimension(backgroundImage.getWidth(this), backgroundImage.getHeight(this));
         } else {
             return new Dimension(400, 300);
+        }
+    }
+
+    @Override
+    public void setBounds(int x, int y, int width, int height) {
+        if (mapOriginalSize != null && mapOriginalSize.height > 0) {
+            double aspect = mapAspect;
+            int adjW = width;
+            int adjH = height;
+            if (width / (double) height > aspect) {
+                adjW = (int) Math.max(1, Math.round(height * aspect));
+            } else {
+                adjH = (int) Math.max(1, Math.round(width / aspect));
+            }
+            int dx = (width - adjW) / 2;
+            int dy = (height - adjH) / 2;
+            super.setBounds(x + dx, y + dy, adjW, adjH);
+        } else {
+            super.setBounds(x, y, width, height);
         }
     }
 
@@ -191,10 +208,6 @@ public class MapPanel extends JPanel {
                     }
                     nodes.add(ni);
                 }
-
-                StringBuilder dbg = new StringBuilder("Nodos cargados: ");
-                for (NodeInfo ninfo : nodes) dbg.append(ninfo.numero).append("=").append(ninfo.nombre).append(", ");
-                System.out.println(dbg);
             }
             return nodes;
         } catch (IOException | JsonSyntaxException e) {
@@ -232,10 +245,6 @@ public class MapPanel extends JPanel {
         public java.util.List<String> getConexiones() { return conexiones; }
     }
 
-    /**
-     * Devuelve un listado con nombre, número y nombres de ciudades conectadas para cada nodo.
-     * Retorna null si no se cargaron nodos.
-     */
     public java.util.List<NodeSummary> getNodeSummaries() {
         if (nodesLoaded == null || nodesLoaded.isEmpty()) return null;
         java.util.Map<Integer, String> numToName = new java.util.HashMap<>();
@@ -256,10 +265,6 @@ public class MapPanel extends JPanel {
         return out;
     }
 
-    /**
-     * Busca el índice de un nodo por nombre.
-     * Devuelve -1 si no se encuentra.
-     */
     public int findNodeByName(String nombre) {
         if (nombre == null || nodesLoaded == null) return -1;
         String q = normalize(nombre);

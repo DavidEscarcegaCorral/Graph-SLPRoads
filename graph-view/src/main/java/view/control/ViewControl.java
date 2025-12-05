@@ -67,7 +67,6 @@ public class ViewControl {
         mstMenuComponent = new MSTMenuComponent();
         shortestPathComponent = new ShortestPathComponent();
 
-        // Conectar botones 'Ver ciudades' para mostrar el dialog
         searchAlgorithmsComponent.getCitiesBtn().addActionListener(e -> {
             NodesDialog dlg = new NodesDialog(mainFrame, leftPanel.getMapPanel().getNodeSummaries());
             dlg.setVisible(true);
@@ -83,12 +82,10 @@ public class ViewControl {
 
         rightPanel = new RightPanel(headerMenuPanel);
 
-        // Conectar botones del header para mostrar paneles vacíos en el panel derecho
         headerMenuPanel.getHeaderPanel().getAboutGraphBtn().addActionListener(e -> showInfoPanel("Sobre los grafos"));
         headerMenuPanel.getHeaderPanel().getAboutProyectBtn().addActionListener(e -> showInfoPanel("Sobre el proyecto"));
         headerMenuPanel.getHeaderPanel().getInicioBtn().addActionListener(e -> showWelcomeView());
 
-        // Panel Izquierdo
         controlsPanel = new ControlsPanel();
         leftPanel = new LeftPanel(controlsPanel);
 
@@ -104,6 +101,7 @@ public class ViewControl {
             switchView(AlgorithmCategory.SHORTEST_PATH);
         });
 
+        // Botón Play
         controlsPanel.getPlayBtn().addActionListener(e ->
                 algorithmsControl.startSimulation(currentCategory)
         );
@@ -142,8 +140,6 @@ public class ViewControl {
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
 
-        // No usamos tarjetas (CardPanel) en el RightPanel; mostramos directamente el componente correspondiente
-
         switch (newCategory) {
             case SEARCH:
                 container.add(searchAlgorithmsComponent);
@@ -167,7 +163,6 @@ public class ViewControl {
     private void showInfoPanel(String title) {
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
-        // Limpiar tambien el tercer panel
         rightPanel.getThirdPanel().removeAll();
 
         JPanel p = new JPanel(new BorderLayout());

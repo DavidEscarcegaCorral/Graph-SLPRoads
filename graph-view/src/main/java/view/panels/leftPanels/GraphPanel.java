@@ -4,6 +4,7 @@ import algorithms.GraphAlgorithms;
 import interfaces.IGraph;
 import interfaces.IVisualizer;
 import view.styles.Colors;
+import view.styles.FontUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -107,6 +108,11 @@ public class GraphPanel extends JPanel implements IVisualizer {
     @Override
     public void markEdge(int source, int destination, boolean visited) {
         this.visitedEdges[source][destination] = visited;
+        if (source >= 0 && destination >= 0 && source < visitedEdges.length && destination < visitedEdges.length) {
+            if (graph.isEdge(destination, source)) {
+                this.visitedEdges[destination][source] = visited;
+            }
+        }
     }
 
     @Override
@@ -161,7 +167,9 @@ public class GraphPanel extends JPanel implements IVisualizer {
         for (int source = 0; source < graph.vertexCount(); source++) {
             for (int dest = 0; dest < graph.vertexCount(); dest++) {
                 if (graph.isEdge(source, dest)) {
-                    drawSimpleEdge(g2, source, dest, sx, sy);
+                    if (source <= dest || !graph.isEdge(dest, source)) {
+                        drawSimpleEdge(g2, source, dest, sx, sy);
+                    }
                 }
             }
         }
@@ -220,7 +228,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
             g2.setColor(Colors.COLOR_BUTTON.darker());
         }
 
-        g2.setFont(new Font("Arial", Font.BOLD, 14));
+        g2.setFont(FontUtil.loadFont( 14, "Inter_Thin_Italic"));
 
         String text = String.valueOf(v);
         FontMetrics fm = g2.getFontMetrics();
