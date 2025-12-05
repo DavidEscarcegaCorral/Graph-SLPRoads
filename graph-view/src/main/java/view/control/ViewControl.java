@@ -83,18 +83,9 @@ public class ViewControl {
 
         rightPanel = new RightPanel(headerMenuPanel);
 
-        rightPanel.getClearLogBtn().addActionListener(e -> {
-            String key = "SEARCH";
-            if (currentCategory == AlgorithmCategory.MST) key = "MST";
-            else if (currentCategory == AlgorithmCategory.SHORTEST_PATH) key = "SP";
-            rightPanel.clearCurrentLog(key);
-        });
-
         // Panel Izquierdo
         controlsPanel = new ControlsPanel();
         leftPanel = new LeftPanel(controlsPanel);
-
-        leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getLogArea());
 
         mainAppPanel.setLeftPanel(leftPanel);
         mainAppPanel.setRightPanel(rightPanel);
@@ -146,17 +137,8 @@ public class ViewControl {
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
 
-        // Seleccionar la tarjeta correspondiente y conectar el GraphPanel al TextArea correcto
-        if (newCategory == AlgorithmCategory.SEARCH) {
-            rightPanel.showLogCard("SEARCH");
-            leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getSearchLogArea());
-        } else if (newCategory == AlgorithmCategory.MST) {
-            rightPanel.showLogCard("MST");
-            leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getMstLogArea());
-        } else if (newCategory == AlgorithmCategory.SHORTEST_PATH) {
-            rightPanel.showLogCard("SP");
-            leftPanel.getMapPanel().getGraphPanel().setLogArea(rightPanel.getSpLogArea());
-        }
+        // Mostrar la tarjeta correspondiente
+        rightPanel.showLogCard(newCategory == AlgorithmCategory.SEARCH ? "PLACEHOLDER" : "PLACEHOLDER");
 
         switch (newCategory) {
             case SEARCH:
