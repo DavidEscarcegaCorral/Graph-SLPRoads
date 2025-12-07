@@ -33,21 +33,21 @@ public class SearchAlgorithmsComponent extends JPanel {
         setPreferredSize(new Dimension(700, 500));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         titlePanel.setOpaque(false);
         titlePanel.setMaximumSize(new Dimension(700, 50));
         titlePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        p1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 5));
+        p1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));
         p1.setOpaque(false);
         p1.setMaximumSize(new Dimension(700, 50));
 
-        p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p2 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         p2.setOpaque(false);
         p2.setMaximumSize(new Dimension(700, 50));
         p2.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
-        p3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p3 = new JPanel(new FlowLayout(FlowLayout.CENTER));
         p3.setOpaque(false);
         p3.setMaximumSize(new Dimension(700, 60));
         p3.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 5));
