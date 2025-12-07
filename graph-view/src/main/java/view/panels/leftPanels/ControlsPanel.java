@@ -7,9 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ControlsPanel extends JPanel {
-    private Button playBtn;
-    private Button pauseBtn;
-    private Button restartBtn;
+    private final Button playBtn;
+    private final Button pauseBtn;
+    private final Button restartBtn;
 
     public ControlsPanel() {
         setOpaque(false);
