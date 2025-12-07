@@ -1,7 +1,5 @@
 package graphs;
-
 import interfaces.IGraph;
-
 import java.util.LinkedList;
 
 /**
@@ -76,31 +74,26 @@ public class GraphL implements IGraph {
 
     @Override
     public void setEdge(int i, int j, int weight) {
-        if (weight == 0)
+        if (weight <= 0 || i == j)
             return;
-
         for (Edge curr : adjacencylist[i]) {
             if (curr.getVert() == j) {
                 return;
             }
         }
-
         adjacencylist[i].add(new Edge(j, weight));
+        adjacencylist[j].add(new Edge(i, weight));
         numEdge++;
-        // if (esNoDirigido) { adjacencylist[j].add(new Edge(i, weight)); }
-
     }
+
 
     @Override
     public void deleteEdge(int i, int j) {
-        for (int k = 0; k < adjacencylist[i].size(); k++) {
-            if (adjacencylist[i].get(k).getVert() == j) {
-                adjacencylist[i].remove(k);
-                numEdge--;
-                return;
-            }
-        }
+        adjacencylist[i].removeIf(curr -> curr.getVert() == j);
+        adjacencylist[j].removeIf(curr -> curr.getVert() == i);
+        numEdge--;
     }
+
 
     @Override
     public boolean isEdge(int i, int j) {

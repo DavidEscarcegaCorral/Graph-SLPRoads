@@ -13,14 +13,14 @@ public class HeaderComponent extends JPanel {
 
     public HeaderComponent() {
         setOpaque(false);
-        setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         setPreferredSize(new Dimension(600, 55));
 
-        aboutGraphBtn = new Button("Sobre los grafos", 200, 35, 15, 5, Color.black, Colors.COLOR_HEADER,
+        aboutGraphBtn = new Button("Sobre los Grafos", 200, 35, 15, 5, Color.black, Colors.COLOR_HEADER,
                 Colors.COLOR_HEADER_HOOVER);
         aboutGraphBtn.setNewFont(18, "Inter_Regular");
-        aboutProyectBtn = new Button("Sobre el proyecto", 200, 35, 15, 5, Color.black, Colors.COLOR_HEADER,
+        aboutProyectBtn = new Button("Sobre el Proyecto", 200, 35, 15, 5, Color.black, Colors.COLOR_HEADER,
                 Colors.COLOR_HEADER_HOOVER);
         aboutProyectBtn.setNewFont(18, "Inter_Regular");
 

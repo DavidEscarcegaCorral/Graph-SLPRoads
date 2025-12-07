@@ -12,17 +12,13 @@ import java.awt.*;
 
 public class MSTMenuComponent extends JPanel {
     private ButtonGroup buttonGroup;
-
     private CustomRadioButton rbtn1;
     private CustomRadioButton rbtn2;
     private CustomRadioButton rbtn3;
-
     private JLabel lbl1;
     private JLabel finalWeightLbl;
-
     private TxtFieldPh textField;
     private Button citiesBtn;
-
     private JPanel titlePanel;
     private JPanel p1;
     private JPanel p2;
@@ -58,7 +54,7 @@ public class MSTMenuComponent extends JPanel {
         p4.setMaximumSize(new Dimension(700, 360));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
-        JLabel titleLbL = new JLabel("Árbol de expansion minima");
+        JLabel titleLbL = new JLabel("Árbol de Expansion Mínima");
         titleLbL.setFont(FontUtil.loadFont(20, "Inter_SemiBold"));
         titleLbL.setForeground(Colors.COLOR_BUTTON);
 
@@ -75,12 +71,12 @@ public class MSTMenuComponent extends JPanel {
         lbl1.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         lbl1.setForeground(Color.BLACK);
 
-        finalWeightLbl = new JLabel("Peso final: ");
+        finalWeightLbl = new JLabel("Peso Final: ");
         finalWeightLbl.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         finalWeightLbl.setForeground(Color.BLACK);
 
         textField = new TxtFieldPh("Ciudad o No. de nodo", 220, 40, 16);
-        citiesBtn = new Button("Ver ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        citiesBtn = new Button("Ver Ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
         titlePanel.add(titleLbL);
         p1.add(rbtn1);
@@ -89,6 +85,18 @@ public class MSTMenuComponent extends JPanel {
         p2.add(lbl1);
         p3.add(textField);
         p3.add(citiesBtn);
+
+        rbtn1.addActionListener(e -> {
+            finalWeightLbl.setText("Complejidad Temporal: O(E log E) = O(E log V)");
+        });
+
+        rbtn2.addActionListener(e -> {
+            finalWeightLbl.setText("Complejidad Temporal: O(E log V)");
+        });
+
+        rbtn3.addActionListener(e -> {
+            finalWeightLbl.setText("Complejidad Temporal: O(E log V)");
+        });
 
         TextAreaCustom consoleArea = new TextAreaCustom(10, 20);
         ScrollPaneCustom scroll = new ScrollPaneCustom(consoleArea);
@@ -131,9 +139,9 @@ public class MSTMenuComponent extends JPanel {
 
     public void setWeight(int peso) {
         if (peso == -1) {
-            finalWeightLbl.setText("Peso final: ");
+            finalWeightLbl.setText("Peso Final: ");
         } else {
-            finalWeightLbl.setText("Peso final: " + peso);
+            finalWeightLbl.setText("Peso Final: " + peso);
         }
         finalWeightLbl.revalidate();
         finalWeightLbl.repaint();

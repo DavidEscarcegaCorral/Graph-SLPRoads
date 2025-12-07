@@ -5,10 +5,12 @@
     "x": 254,
     "y": 472,
     "aristas": [
-      { "destino": 1, "peso": 197 },
-      { "destino": 19, "peso": 190 },
-      { "destino": 22, "peso": 77 },
-      { "destino": 4, "peso": 69 }
+      { "destino": 4, "peso": 60 },
+      { "destino": 19, "peso": 28 },
+      { "destino": 21, "peso": 61 },
+      { "destino": 22, "peso": 90 },
+      { "destino": 25, "peso": 78 },
+      { "destino": 29, "peso": 100 }
     ]
   },
   {
@@ -17,10 +19,11 @@
     "x": 316,
     "y": 174,
     "aristas": [
-      { "destino": 0, "peso": 192 },
-      { "destino": 11, "peso": 88 },
+      { "destino": 9, "peso": 10 },
       { "destino": 10, "peso": 102 },
-      { "destino": 15, "peso": 10 }
+      { "destino": 14, "peso": 102 },
+      { "destino": 15, "peso": 10 },
+      { "destino": 21, "peso": 192 }
     ]
   },
   {
@@ -29,8 +32,8 @@
     "x": 443,
     "y": 530,
     "aristas": [
-      { "destino": 8, "peso": 50 },
-      { "destino": 3, "peso": 71 }
+      { "destino": 3, "peso": 71 },
+      { "destino": 8, "peso": 50 }
     ]
   },
   {
@@ -39,9 +42,9 @@
     "x": 378,
     "y": 442,
     "aristas": [
-      { "destino": 21, "peso": 132 },
       { "destino": 2, "peso": 70 },
-      { "destino": 16, "peso": 58 }
+      { "destino": 16, "peso": 58 },
+      { "destino": 21, "peso": 132 }
     ]
   },
   {
@@ -50,18 +53,18 @@
     "x": 182,
     "y": 515,
     "aristas": [
-      { "destino": 0, "peso": 69 }
+      { "destino": 0, "peso": 60 }
     ]
   },
   {
     "nombre": "Ciudad del Maíz",
     "numeroNodo": 5,
-    "x": 528,
-    "y": 418,
+    "x": 500,
+    "y": 412,
     "aristas": [
       { "destino": 8, "peso": 73 },
-      { "destino": 9, "peso": 90 },
-      { "destino": 10, "peso": 128 }
+      { "destino": 10, "peso": 128 },
+      { "destino": 26, "peso": 90 }
     ]
   },
   {
@@ -70,19 +73,20 @@
     "x": 664,
     "y": 496,
     "aristas": [
-      { "destino": 7, "peso": 68 },
+      { "destino": 13, "peso": 31 },
       { "destino": 23, "peso": 31 },
-      { "destino": 13, "peso": 68 }
+      { "destino": 24, "peso": 68 }
     ]
   },
   {
     "nombre": "Xolol",
     "numeroNodo": 7,
-    "x": 634,
-    "y": 612,
+    "x": 645,
+    "y": 597,
     "aristas": [
-      { "destino": 6, "peso": 68 },
-      { "destino": 23, "peso": 63 }
+      { "destino": 23, "peso": 63 },
+      { "destino": 24, "peso": 68 },
+      { "destino": 27, "peso": 68 }
     ]
   },
   {
@@ -98,12 +102,12 @@
     ]
   },
   {
-    "nombre": "Antiguo Morelos",
+    "nombre": "Venegas",
     "numeroNodo": 9,
-    "x": 612,
-    "y": 392,
+    "x": 260,
+    "y": 115,
     "aristas": [
-      { "destino": 5, "peso": 90 }
+      { "destino": 1, "peso": 0 }
     ]
   },
   {
@@ -113,8 +117,8 @@
     "y": 311,
     "aristas": [
       { "destino": 1, "peso": 103 },
-      { "destino": 21, "peso": 50 },
-      { "destino": 5, "peso": 149 }
+      { "destino": 5, "peso": 149 },
+      { "destino": 21, "peso": 50 }
     ]
   },
   {
@@ -123,9 +127,9 @@
     "x": 224,
     "y": 251,
     "aristas": [
-      { "destino": 22, "peso": 51 },
       { "destino": 12, "peso": 75 },
-      { "destino": 1, "peso": 87 }
+      { "destino": 14, "peso": 87 },
+      { "destino": 22, "peso": 51 }
     ]
   },
   {
@@ -143,17 +147,17 @@
     "x": 716,
     "y": 466,
     "aristas": [
-      { "destino": 14, "peso": 71 },
       { "destino": 6, "peso": 68 }
     ]
   },
   {
-    "nombre": "Estación Manuel",
+    "nombre": "Villa de Guadalupe",
     "numeroNodo": 14,
-    "x": 739,
-    "y": 422,
+    "x": 286,
+    "y": 240,
     "aristas": [
-      { "destino": 13, "peso": 71 }
+      { "destino": 1, "peso": 71 },
+      { "destino": 11, "peso": 71 }
     ]
   },
   {
@@ -204,10 +208,10 @@
     ]
   },
   {
-    "nombre": "Cerro Gordo",
+    "nombre": "Villa de Reyes",
     "numeroNodo": 20,
-    "x": 272,
-    "y": 515,
+    "x": 268,
+    "y": 539,
     "aristas": [
       { "destino": 19, "peso": 18 }
     ]
@@ -218,8 +222,10 @@
     "x": 307,
     "y": 401,
     "aristas": [
-      { "destino": 10, "peso": 50 },
+      { "destino": 0, "peso": 61 },
+      { "destino": 1, "peso": 52 },
       { "destino": 3, "peso": 52 },
+      { "destino": 10, "peso": 50 },
       { "destino": 22, "peso": 65 }
     ]
   },
@@ -229,7 +235,7 @@
     "x": 239,
     "y": 358,
     "aristas": [
-      { "destino": 0, "peso": 76 },
+      { "destino": 0, "peso": 90 },
       { "destino": 11, "peso": 60 },
       { "destino": 21, "peso": 65 }
     ]
@@ -240,9 +246,65 @@
     "x": 597,
     "y": 510,
     "aristas": [
-      { "destino": 8, "peso": 103 },
+      { "destino": 6, "peso": 33 },
+      { "destino": 7, "peso": 63 },
+      { "destino": 8, "peso": 103 }
+    ]
+  },
+  {
+    "nombre": "San Vicente",
+    "numeroNodo": 24,
+    "x": 704,
+    "y": 552,
+    "aristas": [
       { "destino": 6, "peso": 33 },
       { "destino": 7, "peso": 63 }
+    ]
+  },
+  {
+    "nombre": "Tierra Nueva",
+    "numeroNodo": 25,
+    "x": 335,
+    "y": 576,
+    "aristas": [
+      { "destino": 0, "peso": 78 }
+    ]
+  },
+  {
+    "nombre": "Naranjo",
+    "numeroNodo": 26,
+    "x": 548,
+    "y": 396,
+    "aristas": [
+      { "destino": 5, "peso": 103 }
+    ]
+  },
+  {
+    "nombre": "Xilitla",
+    "numeroNodo": 27,
+    "x": 621,
+    "y": 635,
+    "aristas": [
+      { "destino": 7, "peso": 63 },
+      { "destino": 28, "peso": 63 }
+    ]
+  },
+  {
+    "nombre": "Tamazunchale",
+    "numeroNodo": 28,
+    "x": 675,
+    "y": 649,
+    "aristas": [
+      { "destino": 27, "peso": 63 }
+    ]
+  },
+  {
+    "nombre": "Salinas Hidalgo",
+    "numeroNodo": 29,
+    "x": 124,
+    "y": 367,
+    "aristas": [
+      { "destino": 0, "peso": 100 }
     ]
   }
 ]

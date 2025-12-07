@@ -173,14 +173,14 @@ public class AlgorithmsControl {
                     resultWeight = res.finalDistance;
                     final ShortestPathResult finalRes = res;
                     SwingUtilities.invokeLater(() -> {
-                        shortestPathComponent.setTotalDistanceText("Distancia total: " + (finalRes.finalDistance == Integer.MAX_VALUE ? "∞" : finalRes.finalDistance));
+                        shortestPathComponent.setTotalDistanceText("Distancia Total: " + (finalRes.finalDistance == Integer.MAX_VALUE ? "∞" : finalRes.finalDistance));
                     });
                 } else if(shortestPathComponent.isDijkstraSelected()){
                     ShortestPathResult res = GraphAlgorithms.runDijkstraWithEvolution(graphPanel, startNode, endNode);
                     resultWeight = res.finalDistance;
                     final ShortestPathResult finalRes = res;
                     SwingUtilities.invokeLater(() -> {
-                        shortestPathComponent.setTotalDistanceText("Distancia total: " + (finalRes.finalDistance == Integer.MAX_VALUE ? "∞" : finalRes.finalDistance));
+                        shortestPathComponent.setTotalDistanceText("Distancia Total: " + (finalRes.finalDistance == Integer.MAX_VALUE ? "∞" : finalRes.finalDistance));
                     });
                 }
                 break;

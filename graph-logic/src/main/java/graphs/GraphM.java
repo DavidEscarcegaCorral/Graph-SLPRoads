@@ -1,5 +1,4 @@
 package graphs;
-
 import interfaces.IGraph;
 
 /**

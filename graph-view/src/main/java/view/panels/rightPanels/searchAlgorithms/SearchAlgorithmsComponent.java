@@ -57,7 +57,7 @@ public class SearchAlgorithmsComponent extends JPanel {
         p4.setMaximumSize(new Dimension(700, 450));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
-        JLabel titleLbL = new JLabel("Recorrido del grafo");
+        JLabel titleLbL = new JLabel("Recorrido del Grafo");
         titleLbL.setFont(FontUtil.loadFont(20, "Inter_SemiBold"));
         titleLbL.setForeground(Colors.COLOR_BUTTON);
 
@@ -71,7 +71,7 @@ public class SearchAlgorithmsComponent extends JPanel {
         lbl1 = new JLabel("Iniciar el recorrido en:");
         lbl1.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         lbl1.setForeground(Color.BLACK);
-        lbl2 = new JLabel("Complejidad temporal: ");
+        lbl2 = new JLabel("Complejidad Temporal: ");
         lbl2.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         lbl2.setForeground(Color.BLACK);
 
@@ -80,7 +80,7 @@ public class SearchAlgorithmsComponent extends JPanel {
         rbtn2.addActionListener(e -> updateComplexityLabel());
 
         textField = new TxtFieldPh("Ciudad o No. de nodo", 220, 40, 16);
-        citiesBtn = new Button("Ver ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        citiesBtn = new Button("Ver Ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
         titlePanel.add(titleLbL);
         p1.add(rbtn1);
@@ -121,7 +121,7 @@ public class SearchAlgorithmsComponent extends JPanel {
     }
 
     private void updateComplexityLabel() {
-        lbl2.setText("Complejidad temporal: O(V + E)");
+        lbl2.setText("Complejidad Temporal: O(V + E)");
     }
 
     public TxtFieldPh getTextField() {

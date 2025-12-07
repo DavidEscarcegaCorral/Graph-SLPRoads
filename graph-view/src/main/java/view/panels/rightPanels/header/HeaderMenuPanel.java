@@ -15,8 +15,9 @@ public class HeaderMenuPanel extends JPanel {
 
         headerPanel = header;
         optionsMenuComponent = algotihmsMenu;
-        lbl1 = new  JLabel("Seleccionar algoritmo");
+        lbl1 = new  JLabel("Seleccionar Algoritmo");
         lbl1.setFont(FontUtil.loadFont(26, "Inter_SemiBold"));
+        lbl1.setAlignmentX(CENTER_ALIGNMENT);
 
 
         add(Box.createHorizontalGlue());

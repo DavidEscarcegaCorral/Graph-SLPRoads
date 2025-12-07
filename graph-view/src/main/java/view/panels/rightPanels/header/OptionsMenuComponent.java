@@ -15,9 +15,9 @@ public class OptionsMenuComponent extends JPanel {
         setOpaque(false);
         setLayout(new FlowLayout(FlowLayout.LEFT, 8, 5));
 
-        recorridoBtn = new Button("Recorrer el grafo", 170, 35, 15, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
-        mstBtn = new Button("Árbol de expansion minima", 250, 35, 15, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
-        rutaCortaBtn = new Button("Cálculo de rutas más cortas", 250, 35, 15, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        recorridoBtn = new Button("Recorrer el Grafo", 170, 35, 15, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        mstBtn = new Button("Árbol de Expansion Mínima", 250, 35, 15, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        rutaCortaBtn = new Button("Cálculo de Rutas Más Cortas", 250, 35, 15, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
         add(recorridoBtn);
         add(mstBtn);

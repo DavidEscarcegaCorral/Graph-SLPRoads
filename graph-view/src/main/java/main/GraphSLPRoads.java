@@ -1,9 +1,8 @@
 package main;
-
 import view.MainFrame;
 import view.control.ViewControl;
-
 import javax.swing.*;
+
 
 public class GraphSLPRoads {
     public static void main(String[] args) {

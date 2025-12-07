@@ -82,8 +82,8 @@ public class ViewControl {
 
         rightPanel = new RightPanel(headerMenuPanel);
 
-        headerMenuPanel.getHeaderPanel().getAboutGraphBtn().addActionListener(e -> showInfoPanel("Sobre los grafos"));
-        headerMenuPanel.getHeaderPanel().getAboutProyectBtn().addActionListener(e -> showInfoPanel("Sobre el proyecto"));
+        headerMenuPanel.getHeaderPanel().getAboutGraphBtn().addActionListener(e -> showInfoPanel("Sobre los Grafos"));
+        headerMenuPanel.getHeaderPanel().getAboutProyectBtn().addActionListener(e -> showProjectPanel("Sobre el Proyecto"));
         headerMenuPanel.getHeaderPanel().getInicioBtn().addActionListener(e -> showWelcomeView());
 
         controlsPanel = new ControlsPanel();
@@ -123,7 +123,7 @@ public class ViewControl {
         JPanel container = rightPanel.getSecondPanel();
         container.removeAll();
 
-        JLabel welcomeLabel = new JLabel("<html><center><h2>Bienvenido al Visualizador</h2><p>Por favor seleccione una categoría de algoritmo<br>en el menú para comenzar..</p></center></html>");
+        JLabel welcomeLabel = new JLabel("<html><center><h2>Bienvenido al Visualizador</h2><p>Por favor seleccione una categoría de algoritmo<br>en el menú para comenzar.</p></center></html>");
         welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         container.add(welcomeLabel, BorderLayout.CENTER);
 
@@ -167,13 +167,70 @@ public class ViewControl {
 
         JPanel p = new JPanel(new BorderLayout());
         p.setOpaque(false);
-        JLabel lbl = new JLabel("<html><center><h2>" + title + "</h2></center></html>");
+        JLabel lbl = new JLabel("<html>\n" +
+                "<center>\n" +
+                "<h2><b>Visualizador de Algoritmos en Grafos</b></h2>\n" +
+                "\n" +
+                "<p>\n" +
+                "Este sistema permite explorar, analizar y visualizar un grafo real obtenido<br>\n" +
+                "a partir de localidades del estado de San Luis Potosí y las carreteras que las conectan.<br>\n" +
+                "Desde el menú lateral podrá acceder a recorridos, rutas más cortas,<br>\n" +
+                "árboles de expansión mínima y la representación gráfica del grafo.<br><br>\n" +
+                "\n" +
+                "Seleccione una categoría para comenzar.\n" +
+                "</p>\n" +
+                "\n" +
+                "</center>\n" +
+                "</html>\n");
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
         p.add(lbl, BorderLayout.CENTER);
 
         container.add(p, BorderLayout.CENTER);
 
-        // Desactivar controles mientras se muestra info
+        controlsPanel.getPlayBtn().setEnabled(false);
+        controlsPanel.getPauseBtn().setEnabled(false);
+        controlsPanel.getRestartBtn().setEnabled(false);
+
+        container.revalidate();
+        container.repaint();
+    }
+
+
+    private void showProjectPanel(String title) {
+        JPanel container = rightPanel.getSecondPanel();
+        container.removeAll();
+        rightPanel.getThirdPanel().removeAll();
+
+        JPanel p = new JPanel(new BorderLayout());
+        p.setOpaque(false);
+        JLabel lbl = new JLabel("<html>\n" +
+                "<center>\n" +
+                "<h2><b>Proyecto Final - Análisis de Algoritmos</b></h2>\n" +
+                "\n" +
+                "<p>\n" +
+                "Este proyecto aplica algoritmos fundamentales de teoría de grafos<br>\n" +
+                "sobre un grafo real construido con datos oficiales del estado de San Luis Potosí.<br><br>\n" +
+                "\n" +
+                "<b>Características del Grafo:</b><br>\n" +
+                "Hasta 30 localidades conectadas por carreteras principales del estado,<br>\n" +
+                "modeladas como aristas ponderadas por distancia aproximada en kilómetros.<br><br>\n" +
+                "\n" +
+                "<b>El Sistema Permite:</b><br>\n" +
+                "• Visualizar nodos y aristas<br>\n" +
+                "• Ejecutar recorridos por anchura (BFS) y por profundidad (DFS)<br>\n" +
+                "• Construir árboles de expansión mínima (Kruskal, Prim, Borůvka)<br>\n" +
+                "• Calcular rutas más cortas (Bellman–Ford y Dijkstra)<br>\n" +
+                "\n" +
+                "Seleccione una opción del menú para comenzar.\n" +
+                "</p>\n" +
+                "\n" +
+                "</center>\n" +
+                "</html>\n");
+        lbl.setHorizontalAlignment(SwingConstants.CENTER);
+        p.add(lbl, BorderLayout.CENTER);
+
+        container.add(p, BorderLayout.CENTER);
+
         controlsPanel.getPlayBtn().setEnabled(false);
         controlsPanel.getPauseBtn().setEnabled(false);
         controlsPanel.getRestartBtn().setEnabled(false);

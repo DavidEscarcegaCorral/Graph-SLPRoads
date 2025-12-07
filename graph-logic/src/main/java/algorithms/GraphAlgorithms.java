@@ -1,10 +1,8 @@
 package algorithms;
-
 import algorithms.mst.EdgeContext;
 import algorithms.mst.UnionFind;
 import interfaces.IGraph;
 import interfaces.IVisualizer;
-
 import java.util.*;
 
 /**
@@ -379,6 +377,8 @@ public class GraphAlgorithms {
         Arrays.fill(parent, -1);
 
         dist[startNode] = 0;
+        graph.setMark(startNode, GRAY);
+        visual.pauseAndRedraw("Marcando nodo inicial " + startNode + " como gris.", 200);
 
         PriorityQueue<NodeDist> pq = new PriorityQueue<>();
         pq.add(new NodeDist(startNode, 0));
@@ -569,5 +569,4 @@ public class GraphAlgorithms {
         }
         visual.resetVisuals();
     }
-
 }

@@ -59,7 +59,7 @@ public class ShortestPathComponent extends JPanel {
         p4.setMaximumSize(new Dimension(700, 360));
         p4.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JLabel titleLbL = new JLabel("Calculo de ruta más corta");
+        JLabel titleLbL = new JLabel("Cálculo de Ruta Más Corta");
         titleLbL.setFont(FontUtil.loadFont(20, "Inter_SemiBold"));
         titleLbL.setForeground(Colors.COLOR_BUTTON);
 
@@ -74,13 +74,13 @@ public class ShortestPathComponent extends JPanel {
         lbl1.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         lbl1.setForeground(Color.BLACK);
 
-        totalDistanceLbl = new JLabel("Distancia total: ");
+        totalDistanceLbl = new JLabel("Distancia Total: ");
         totalDistanceLbl.setFont(FontUtil.loadFont(18, "Inter_Regular"));
         totalDistanceLbl.setForeground(Color.BLACK);
 
         textFieldOrigen = new TxtFieldPh("Ciudad de origen", 220, 40, 16);
         textFieldDestino = new TxtFieldPh("Destino", 220, 40, 16);
-        citiesBtn = new Button("Ver ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
+        citiesBtn = new Button("Ver Ciudades", 150, 40, 16, 10, Color.WHITE, Colors.COLOR_BUTTON, Colors.COLOR_BUTTON_HOVER);
 
         titlePanel.add(titleLbL);
         p1.add(rbtn1);
@@ -103,12 +103,20 @@ public class ShortestPathComponent extends JPanel {
         clearBtn.addActionListener(ev -> {
             consoleArea.setText("");
             ConsoleTee.getInstance().clearChannel(AlgorithmCategory.SHORTEST_PATH);
-            setTotalDistanceText("Distancia total: ");
+            setTotalDistanceText("Distancia Total: ");
         });
         JPanel btnWrapPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
         btnWrapPanel.setOpaque(false);
         btnWrapPanel.add(clearBtn);
         southPanel.add(btnWrapPanel, BorderLayout.EAST);
+
+        rbtn1.addActionListener(ev -> {
+            totalDistanceLbl.setText("Complejidad Temporal: O(V²)");
+        });
+
+        rbtn2.addActionListener(ev -> {
+            totalDistanceLbl.setText("Complejidad Temporal: O(E + V log V)");
+        });
 
         p4.add(scroll, BorderLayout.CENTER);
         p4.add(southPanel, BorderLayout.SOUTH);
