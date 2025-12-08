@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -21,6 +23,8 @@ public class GraphPanel extends JPanel implements IVisualizer {
     private final Point[] positions;
     private boolean[][] visitedEdges;
     private Dimension originalMapSize = null;
+
+    private boolean[] allowedNodes = null;
 
     private static final int NODE_DIAMETER = 30;
     private static final int NODE_RADIUS = NODE_DIAMETER / 2;
@@ -52,12 +56,10 @@ public class GraphPanel extends JPanel implements IVisualizer {
             new Point(597, 510)  // Nodo 23
     };
 
-    // Cached scaled center coordinates
     private int[] centerX;
     private int[] centerY;
     private volatile boolean scaledDirty = true;
 
-    // Cached resources to avoid allocations each paint
     private final Font nodeFont;
     private final BasicStroke edgeStroke = new BasicStroke(2.5f);
     private final BasicStroke nodeStroke = new BasicStroke(2.0f);
@@ -66,18 +68,12 @@ public class GraphPanel extends JPanel implements IVisualizer {
     private static final Color EDGE_VISITED = Color.BLUE;
     private static final Color EDGE_DEFAULT = Color.DARK_GRAY;
 
-    /**
-     * Constructor del panel.
-     *
-     * @param g El grafo a visualizar.
-     */
+
     public GraphPanel(IGraph g) {
         this(g, null);
     }
 
-    /**
-     * Nuevo constructor que recibe las posiciones de los nodos (en coordenadas del mapa).
-     */
+
     public GraphPanel(IGraph g, Point[] positions) {
         setOpaque(false);
         this.graph = g;
@@ -135,6 +131,7 @@ public class GraphPanel extends JPanel implements IVisualizer {
         }
         int count = graph.vertexCount();
         this.visitedEdges = new boolean[count][count];
+        this.allowedNodes = null;
         markScaledDirty();
         repaint();
     }
@@ -147,6 +144,39 @@ public class GraphPanel extends JPanel implements IVisualizer {
         if (graph.isEdge(destination, source)) {
             this.visitedEdges[destination][source] = visited;
         }
+    }
+
+    public synchronized void setAllowedComponent(int startNode) {
+        int n = graph.vertexCount();
+        if (startNode < 0 || startNode >= n) {
+            this.allowedNodes = null;
+            repaint();
+            return;
+        }
+
+        boolean[] seen = new boolean[n];
+        Queue<Integer> q = new ArrayDeque<>();
+        seen[startNode] = true;
+        q.add(startNode);
+
+        while (!q.isEmpty()) {
+            int u = q.poll();
+            for (int v = graph.firstNeighbor(u); v < graph.vertexCount(); v = graph.nextNeighbor(u, v)) {
+                if (!seen[v]) {
+                    seen[v] = true;
+                    q.add(v);
+                }
+            }
+        }
+
+        this.allowedNodes = seen;
+        markScaledDirty();
+        repaint();
+    }
+
+    public synchronized void clearAllowedComponent() {
+        this.allowedNodes = null;
+        repaint();
     }
 
     @Override
@@ -199,13 +229,16 @@ public class GraphPanel extends JPanel implements IVisualizer {
         int[] cx = this.centerX;
         int[] cy = this.centerY;
         boolean[][] localVisited = this.visitedEdges;
+        boolean[] allowed = this.allowedNodes;
 
         g2.setStroke(edgeStroke);
         for (int source = 0; source < n; source++) {
             for (int dest = 0; dest < n; dest++) {
                 if (graph.isEdge(source, dest)) {
                     if (source <= dest || !graph.isEdge(dest, source)) {
-                        g2.setColor(localVisited[source][dest] ? EDGE_VISITED : EDGE_DEFAULT);
+                        boolean bothAllowed = (allowed == null) || (allowed[source] && allowed[dest]);
+                        boolean markVisited = localVisited[source][dest] && bothAllowed;
+                        g2.setColor(markVisited ? EDGE_VISITED : EDGE_DEFAULT);
                         g2.drawLine(cx[source], cy[source], cx[dest], cy[dest]);
                     }
                 }
@@ -216,22 +249,23 @@ public class GraphPanel extends JPanel implements IVisualizer {
         g2.setStroke(nodeStroke);
 
         for (int v = 0; v < n; v++) {
-            int mark = graph.getMark(v);
-            Color fill;
-            Color borderColor;
-            Color textColor;
-            if (mark == GraphAlgorithms.BLACK) {
-                fill = Colors.COLOR_BUTTON;
-                borderColor = Colors.COLOR_BUTTON.darker();
-                textColor = Color.WHITE;
-            } else if (mark == GraphAlgorithms.GRAY) {
-                fill = Color.LIGHT_GRAY;
-                borderColor = Colors.COLOR_BUTTON.darker();
-                textColor = Colors.COLOR_BUTTON.darker();
-            } else {
-                fill = NODE_FILL_WHITE;
-                borderColor = Colors.COLOR_BUTTON.darker();
-                textColor = Colors.COLOR_BUTTON.darker();
+            boolean nodeAllowed = (allowed == null) || allowed[v];
+
+            Color fill = NODE_FILL_WHITE;
+            Color borderColor = Colors.COLOR_BUTTON.darker();
+            Color textColor = Colors.COLOR_BUTTON.darker();
+
+            if (nodeAllowed) {
+                int mark = graph.getMark(v);
+                if (mark == GraphAlgorithms.BLACK) {
+                    fill = Colors.COLOR_BUTTON;
+                    borderColor = Colors.COLOR_BUTTON.darker();
+                    textColor = Color.WHITE;
+                } else if (mark == GraphAlgorithms.GRAY) {
+                    fill = Color.LIGHT_GRAY;
+                    borderColor = Colors.COLOR_BUTTON.darker();
+                    textColor = Colors.COLOR_BUTTON.darker();
+                }
             }
 
             int x = cx[v] - NODE_RADIUS;

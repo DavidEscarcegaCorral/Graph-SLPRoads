@@ -173,7 +173,6 @@ public class ViewControl {
 
         container.add(p, BorderLayout.CENTER);
 
-        // Desactivar controles mientras se muestra info
         controlsPanel.getPlayBtn().setEnabled(false);
         controlsPanel.getPauseBtn().setEnabled(false);
         controlsPanel.getRestartBtn().setEnabled(false);

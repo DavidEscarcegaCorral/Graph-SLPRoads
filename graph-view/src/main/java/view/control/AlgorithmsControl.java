@@ -58,9 +58,7 @@ public class AlgorithmsControl {
         }
     }
 
-    /**
-     * Inicia la simulación basada en la categoría actual que le pasa el ViewControl.
-     */
+
     public void startSimulation(AlgorithmCategory currentCategory) {
         int startNode = 0;
         int endNode = -1;
@@ -92,21 +90,15 @@ public class AlgorithmsControl {
 
         if (!isValid) return;
 
-        if (currentCategory == AlgorithmCategory.SHORTEST_PATH) {
-            if (SwingUtilities.isEventDispatchThread()) {
-                graphPanel.resetVisuals();
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(() -> graphPanel.resetVisuals());
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainFrame, "Reset de vista interrumpido."));
-                    return;
-                } catch (InvocationTargetException ite) {
-                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainFrame, "Error al resetear la vista: " + ite.getCause()));
-                    return;
-                }
-            }
+        graphPanel.resetVisuals();
+
+        if ((currentCategory == AlgorithmCategory.SEARCH) ||
+                (currentCategory == AlgorithmCategory.SHORTEST_PATH) ||
+                (currentCategory == AlgorithmCategory.MST && mstPanel.isPrimSelected())) {
+
+            graphPanel.setAllowedComponent(startNode);
+        } else {
+            graphPanel.clearAllowedComponent();
         }
 
         controlsPanel.getPlayBtn().setEnabled(false);
@@ -116,35 +108,35 @@ public class AlgorithmsControl {
 
         mstPanel.setWeight(-1);
 
-        final int finalStartNode = startNode;
-        final int finalEndNode = endNode;
-
-        // Control de la impresion en el textArea
         ConsoleTee.getInstance().setActiveChannel(currentCategory);
         ConsoleTee.getInstance().clearChannel(currentCategory);
 
+        final int finalStart = startNode;
+        final int finalEnd = endNode;
+
         new Thread(() -> {
             try {
-                int finalWeight = runLogic(currentCategory, finalStartNode, finalEndNode);
+                int weight = runLogic(currentCategory, finalStart, finalEnd);
 
                 if (currentCategory == AlgorithmCategory.MST) {
-                    SwingUtilities.invokeLater(() -> {
-                        mstPanel.setWeight(finalWeight);
-                    });
+                    SwingUtilities.invokeLater(() -> mstPanel.setWeight(weight));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
                 SwingUtilities.invokeLater(() ->
-                        JOptionPane.showMessageDialog(mainFrame, "Error inesperado: " + e.getMessage())
+                        JOptionPane.showMessageDialog(mainFrame, "Error inesperado: " + ex.getMessage())
                 );
             } finally {
                 SwingUtilities.invokeLater(() -> {
                     restoreControlButtons();
                     ConsoleTee.getInstance().setActiveChannel(null);
+                    graphPanel.clearAllowedComponent();
                 });
             }
         }).start();
     }
+
 
     private int runLogic(AlgorithmCategory category, int startNode, int endNode) {
         int resultWeight = -1;
