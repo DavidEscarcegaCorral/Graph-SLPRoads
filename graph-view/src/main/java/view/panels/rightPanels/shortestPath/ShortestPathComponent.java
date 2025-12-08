@@ -104,7 +104,6 @@ public class ShortestPathComponent extends JPanel {
             consoleArea.setText("");
             ConsoleTee.getInstance().clearChannel(AlgorithmCategory.SHORTEST_PATH);
             setTotalDistanceText("Distancia Total: ");
-
         });
         JPanel btnWrapPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
         btnWrapPanel.setOpaque(false);
