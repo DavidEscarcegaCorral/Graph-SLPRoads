@@ -66,20 +66,16 @@ public class GraphAlgorithms {
      */
     public static void runDFSFromNode(IVisualizer visual, int startNode) {
         if (isPaused) resumeAlgorithm();
-
         IGraph graph = visual.getGraph();
         int vertex;
-
         for (vertex = 0; vertex < graph.vertexCount(); vertex++) {
             graph.setMark(vertex, WHITE);
         }
         visual.resetVisuals();
-
+        graph.setMark(startNode, GRAY);
         visual.pauseAndRedraw("Estado inicial. Iniciando en " + startNode, 1000);
+        DFS(visual, startNode);
 
-        if (graph.getMark(startNode) == WHITE) {
-            DFS(visual, startNode);
-        }
         System.out.println("Recorrido desde " + startNode + " completado.");
     }
 
@@ -114,6 +110,9 @@ public class GraphAlgorithms {
             graph.setMark(v, WHITE);
         }
         visual.resetVisuals();
+
+        graph.setMark(startNode, GRAY);
+
         visual.pauseAndRedraw("Estado inicial (BFS). Inicio: " + startNode, 1000);
 
         BFS(visual, startNode);
@@ -156,13 +155,14 @@ public class GraphAlgorithms {
     public static int runKruskal(IVisualizer visual) {
         if (isPaused) resumeAlgorithm();
         IGraph graph = visual.getGraph();
+        int n = graph.vertexCount();
 
         resetForMST(visual, graph);
-        visual.pauseAndRedraw("Iniciando Kruskal. Obteniendo todas las aristas...", 1000);
+        visual.pauseAndRedraw("Iniciando Kruskal. Ordenando aristas...", 1000);
 
         List<EdgeContext> allEdges = new ArrayList<>();
-        for (int i = 0; i < graph.vertexCount(); i++) {
-            for (int j = i + 1; j < graph.vertexCount(); j++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
                 if (graph.isEdge(i, j)) {
                     allEdges.add(new EdgeContext(i, j, graph.weight(i, j)));
                 }
@@ -170,57 +170,68 @@ public class GraphAlgorithms {
         }
         Collections.sort(allEdges);
 
-        UnionFind uf = new UnionFind(graph.vertexCount());
+        UnionFind uf = new UnionFind(n);
         int mstWeight = 0;
         int edgesCount = 0;
-        List<String> selectedEdges = new ArrayList<>();
+        List<String> selectedEdgesStr = new ArrayList<>();
 
         for (EdgeContext edge : allEdges) {
-            visual.pauseAndRedraw("Analizando arista: " + edge, 500);
+            int u = edge.source;
+            int v = edge.dest;
+
+            visual.markEdge(u, v, true);
+
+            boolean uWasBlack = (graph.getMark(u) == BLACK);
+            boolean vWasBlack = (graph.getMark(v) == BLACK);
+
+            if (!uWasBlack) graph.setMark(u, GRAY);
+            if (!vWasBlack) graph.setMark(v, GRAY);
+
+            visual.pauseAndRedraw("Analizando conexión: " + u + " - " + v + " (Peso: " + edge.weight + ")", 600);
             checkPause();
 
-            if (uf.union(edge.source, edge.dest)) {
-
-                visual.markEdge(edge.source, edge.dest, true);
-                graph.setMark(edge.source, BLACK);
-                graph.setMark(edge.dest, BLACK);
-
+            if (uf.union(u, v)) {
                 mstWeight += edge.weight;
                 edgesCount++;
-                selectedEdges.add(edge.toString());
+                selectedEdgesStr.add(edge.toString());
+                graph.setMark(u, BLACK);
+                graph.setMark(v, BLACK);
 
-                visual.pauseAndRedraw("Arista agregada (Peso acumulado: " + mstWeight + ")", 800);
+                visual.pauseAndRedraw("ACEPTADA. Peso acumulado: " + mstWeight, 500);
             } else {
-                visual.pauseAndRedraw("Arista descartada (crea ciclo): " + edge, 200);
+                visual.markEdge(u, v, false);
+                visual.pauseAndRedraw("RECHAZADA (Ciclo)", 300);
             }
+
+            checkPause();
+
+            if (edgesCount == n - 1) break;
         }
 
-        System.out.println("FINALIZADO");
-        System.out.println("Peso Total: " + mstWeight);
-        System.out.println("Aristas: " + selectedEdges);
+        System.out.println("KRUSKAL FINALIZADO. Peso: " + mstWeight);
         visual.pauseAndRedraw("Kruskal Terminado. Peso Total: " + mstWeight, 0);
 
         return mstWeight;
-
     }
 
     public static int runPrim(IVisualizer visual, int startNode) {
         if (isPaused) resumeAlgorithm();
         IGraph graph = visual.getGraph();
+        int n = graph.vertexCount();
 
         resetForMST(visual, graph);
-        visual.pauseAndRedraw("Iniciando Prim desde nodo: " + startNode, 1000);
+        visual.pauseAndRedraw("Iniciando Prim desde: " + startNode, 1000);
 
         PriorityQueue<EdgeContext> pq = new PriorityQueue<>();
-
-        boolean[] inMST = new boolean[graph.vertexCount()];
-
+        boolean[] inMST = new boolean[n];
         int mstWeight = 0;
-        List<String> selectedEdges = new ArrayList<>();
 
         inMST[startNode] = true;
         graph.setMark(startNode, BLACK);
-        addEdgesToPQ(graph, startNode, pq, inMST);
+
+        addEdgesToPQ(visual, graph, startNode, pq, inMST);
+
+        visual.pauseAndRedraw("Inicio establecido. Frontera (Gris) lista.", 800);
 
         while (!pq.isEmpty()) {
             EdgeContext edge = pq.poll();
@@ -229,21 +240,38 @@ public class GraphAlgorithms {
 
             inMST[edge.dest] = true;
             mstWeight += edge.weight;
-            selectedEdges.add(edge.toString());
 
-            graph.setMark(edge.dest, BLACK);
             visual.markEdge(edge.source, edge.dest, true);
-            visual.pauseAndRedraw("Agregando nodo " + edge.dest + " vía arista peso " + edge.weight, 800);
+            graph.setMark(edge.dest, BLACK);
+
+            visual.pauseAndRedraw("Nodo " + edge.dest + " agregado. Total: " + mstWeight, 500);
             checkPause();
 
-            addEdgesToPQ(graph, edge.dest, pq, inMST);
+            addEdgesToPQ(visual, graph, edge.dest, pq, inMST);
         }
 
-        System.out.println("FINALIZADO");
-        System.out.println("Peso Total: " + mstWeight);
         visual.pauseAndRedraw("Prim Terminado. Peso Total: " + mstWeight, 0);
-
         return mstWeight;
+    }
+
+    private static void addEdgesToPQ(IVisualizer visual, IGraph graph, int u, PriorityQueue<EdgeContext> pq, boolean[] inMST) {
+        boolean visualChange = false;
+
+        for (int v = graph.firstNeighbor(u); v < graph.vertexCount(); v = graph.nextNeighbor(u, v)) {
+            if (!inMST[v]) {
+                pq.add(new EdgeContext(u, v, graph.weight(u, v)));
+
+                if (graph.getMark(v) == WHITE) {
+                    graph.setMark(v, GRAY);
+                    visualChange = true;
+                }
+            }
+        }
+
+        if (visualChange) {
+            visual.pauseAndRedraw("Expandiendo frontera...", 300);
+            checkPause();
+        }
     }
 
     public static int runBoruvka(IVisualizer visual) {
@@ -267,12 +295,14 @@ public class GraphAlgorithms {
 
         int mstWeight = 0;
         int components = n;
-        List<String> selectedEdges = new ArrayList<>();
         int iteration = 1;
 
         while (components > 1) {
-            System.out.println("Iteración Boruvka " + iteration );
-            visual.pauseAndRedraw("Iteración " + iteration + " (Componentes: " + components + ") ---", 800);
+
+            visual.pauseAndRedraw(
+                    "Iteración " + iteration + " — Componentes actuales: " + components,
+                    800
+            );
 
             EdgeContext[] cheapest = new EdgeContext[n];
 
@@ -291,7 +321,11 @@ public class GraphAlgorithms {
             }
 
             boolean anyMerged = false;
+
             for (int i = 0; i < n; i++) {
+
+                if (uf.find(i) != i) continue;
+
                 EdgeContext e = cheapest[i];
                 if (e == null) continue;
 
@@ -299,37 +333,36 @@ public class GraphAlgorithms {
                 int setV = uf.find(e.dest);
 
                 if (setU != setV) {
-                    if (uf.union(e.source, e.dest)) {
-                        anyMerged = true;
-                        mstWeight += e.weight;
-                        components--;
-                        selectedEdges.add(e.toString());
 
+                    if (uf.union(setU, setV)) {
+
+                        anyMerged = true;
+                        components--;
+                        mstWeight += e.weight;
                         graph.setMark(e.source, BLACK);
                         graph.setMark(e.dest, BLACK);
                         visual.markEdge(e.source, e.dest, true);
 
-                        visual.pauseAndRedraw("Agregando arista [" + e.source + "-" + e.dest + "] (Peso: " + e.weight + ")", 500);
+                        visual.pauseAndRedraw(
+                                "Agregando arista " + e + " (peso " + e.weight + ") al MST",
+                                500
+                        );
                         checkPause();
-
-                        System.out.println("Uniendo componentes con arista: " + e);
                     }
                 }
             }
-
             if (!anyMerged) {
-                visual.pauseAndRedraw("No se pueden unir más componentes. Fin.", 500);
+                visual.pauseAndRedraw("No se pueden unir más componentes. Finalizando...", 800);
                 break;
             }
             iteration++;
         }
-
-        System.out.println("FINALIZADO BORUVKA");
-        System.out.println("Peso Total: " + mstWeight);
-        visual.pauseAndRedraw("Boruvka Terminado. Peso Total: " + mstWeight, 0);
-
+        visual.pauseAndRedraw("Boruvka Terminado — Peso Total: " + mstWeight, 0);
         return mstWeight;
     }
+
+
+
 
     static class NodeDist implements Comparable<NodeDist> {
         int node;
@@ -363,12 +396,14 @@ public class GraphAlgorithms {
         int n = graph.vertexCount();
 
         if (startNode < 0 || startNode >= n || endNode < 0 || endNode >= n) {
-            visual.pauseAndRedraw("Dijkstra: nodos fuera de rango.", 0);
+            visual.pauseAndRedraw("Error: Nodos fuera de rango.", 0);
             return new ShortestPathResult(Integer.MAX_VALUE, Collections.emptyList());
         }
 
+        resetForMST(visual, graph);
+
         visual.pauseAndRedraw(
-                " Iniciando Dijkstra: calculando la ruta más corta desde el nodo " + startNode + " hasta el nodo " + endNode, 800);
+                "Iniciando Dijkstra desde nodo " + startNode + " hasta nodo " + endNode, 1000);
 
         int[] dist = new int[n];
         int[] parent = new int[n];
@@ -383,6 +418,8 @@ public class GraphAlgorithms {
         PriorityQueue<NodeDist> pq = new PriorityQueue<>();
         pq.add(new NodeDist(startNode, 0));
 
+        graph.setMark(startNode, GRAY);
+
         List<int[]> snapshots = new ArrayList<>();
         snapshots.add(Arrays.copyOf(dist, n));
 
@@ -390,42 +427,44 @@ public class GraphAlgorithms {
             NodeDist current = pq.poll();
             int u = current.node;
 
-            if (current.dist != dist[u]) continue;
+            if (current.dist > dist[u]) continue;
 
             visual.pauseAndRedraw(
-                    " Procesando nodo " + u
-                            + ". Distancia conocida hasta este nodo: " + dist[u], 500);
+                    "Procesando nodo " + u + " (Distancia actual: " + dist[u] + ")", 500);
             checkPause();
 
-            if (u == endNode) break;
+            if (u == endNode) {
+                visual.pauseAndRedraw("¡Destino " + endNode + " alcanzado!", 1000);
+                break;
+            }
 
             for (int v = graph.firstNeighbor(u); v < n; v = graph.nextNeighbor(u, v)) {
 
                 int weight = graph.weight(u, v);
-                if (weight < 0) continue;
 
-                visual.pauseAndRedraw(
-                        " Evaluando vecino " + v + " desde nodo " + u
-                                + ". Peso de la arista: " + weight, 300);
+                if (weight < 0) {
+                    System.err.println("Advertencia: Arista negativa en Dijkstra. Resultados no garantizados.");
+                    continue;
+                }
 
                 if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
                     dist[v] = dist[u] + weight;
                     parent[v] = u;
+
                     pq.add(new NodeDist(v, dist[v]));
 
                     graph.setMark(v, GRAY);
                     visual.markEdge(u, v, true);
+
                     visual.pauseAndRedraw(
-                            "Distancia mejorada a nodo " + v
-                                    + " vía nodo " + u + ". Nueva distancia mínima: " + dist[v], 300);
+                            "  -> Actualizando vecino " + v + ". Nueva dist: " + dist[v], 300);
                     checkPause();
+
+                    visual.markEdge(u, v, false);
 
                     snapshots.add(Arrays.copyOf(dist, n));
                 }
             }
-
-            visual.pauseAndRedraw(
-                    "Nodo " + u + " completamente procesado. Todos sus vecinos han sido evaluados.", 500);
         }
 
         if (dist[endNode] == Integer.MAX_VALUE) {
@@ -439,21 +478,20 @@ public class GraphAlgorithms {
         }
         Collections.reverse(path);
 
-        for (int nodeId : path) {
-            graph.setMark(nodeId, BLACK);
-        }
+        visual.resetVisuals();
+
+        for (int nodeId : path) graph.setMark(nodeId, BLACK);
 
         for (int i = 0; i < path.size() - 1; i++) {
             int a = path.get(i);
             int b = path.get(i + 1);
             visual.markEdge(a, b, true);
-            visual.pauseAndRedraw("Ruta: " + a + " -> " + b, 300);
+            visual.pauseAndRedraw("Camino Óptimo: " + a + " -> " + b, 300);
             checkPause();
         }
 
         visual.pauseAndRedraw(
-                "Dijkstra completado. Distancia más corta desde nodo "
-                        + startNode + " hasta nodo " + endNode + " = " + dist[endNode], 0);
+                "Dijkstra Finalizado. Costo Total: " + dist[endNode], 0);
 
         snapshots.add(Arrays.copyOf(dist, n));
         return new ShortestPathResult(dist[endNode], snapshots);
@@ -468,14 +506,16 @@ public class GraphAlgorithms {
         resetForMST(visual, graph);
 
         visual.pauseAndRedraw(
-                "Iniciando Bellman-Ford: calculando distancias mínimas desde nodo "
-                        + startNode + " hasta nodo " + endNode, 1000);
+                "Iniciando Bellman-Ford: calculando distancias desde nodo "
+                        + startNode + " hasta " + endNode, 1000);
 
         int[] dist = new int[n];
         int[] parent = new int[n];
         Arrays.fill(dist, Integer.MAX_VALUE);
         Arrays.fill(parent, -1);
+
         dist[startNode] = 0;
+        graph.setMark(startNode, GRAY);
 
         List<EdgeContext> edges = new ArrayList<>();
         for (int u = 0; u < n; u++) {
@@ -487,8 +527,9 @@ public class GraphAlgorithms {
         List<int[]> snapshots = new ArrayList<>();
         snapshots.add(Arrays.copyOf(dist, n));
 
-        for (int i = 1; i < n; i++) {
-            visual.pauseAndRedraw("Iteración " + i + " de relajación de todas las aristas...", 700);
+        for (int iter = 1; iter < n; iter++) {
+
+            visual.pauseAndRedraw("Iteración " + iter + " de relajación...", 500);
             checkPause();
 
             boolean changed = false;
@@ -503,21 +544,21 @@ public class GraphAlgorithms {
                     parent[v] = u;
                     changed = true;
 
-                    graph.setMark(u, GRAY);
                     graph.setMark(v, GRAY);
                     visual.markEdge(u, v, true);
-
                     visual.pauseAndRedraw(
-                            "Arista " + u + " → " + v
-                                    + " relajada. Nueva distancia mínima a nodo " + v + ": " + dist[v], 500);
+                            "Mejora encontrada: " + u + " -> " + v
+                                    + " (Nueva dist: " + dist[v] + ")", 300);
                     checkPause();
+
+                    visual.markEdge(u, v, false);
                 }
             }
 
             snapshots.add(Arrays.copyOf(dist, n));
 
             if (!changed) {
-                visual.pauseAndRedraw(" No se actualizaron distancias en esta iteración. Terminando temprano.", 600);
+                visual.pauseAndRedraw("Convergencia alcanzada en iteración " + iter + ".", 800);
                 break;
             }
         }
@@ -526,26 +567,45 @@ public class GraphAlgorithms {
             int u = e.source;
             int v = e.dest;
             int w = e.weight;
-
             if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
-                visual.pauseAndRedraw("Ciclo negativo detectado en la arista " + u + " → " + v + ". No existe solución válida.", 1500);
+                visual.pauseAndRedraw("¡ERROR! Ciclo negativo detectado. No existe solución.", 2000);
                 return new ShortestPathResult(Integer.MIN_VALUE, snapshots);
             }
         }
 
-        int node = endNode;
-        while (node != -1) {
-            graph.setMark(node, BLACK);
-            node = parent[node];
+        if (dist[endNode] == Integer.MAX_VALUE) {
+            visual.pauseAndRedraw("Bellman-Ford completado. Destino inalcanzable.", 0);
+            return new ShortestPathResult(Integer.MAX_VALUE, snapshots);
+        }
+
+        List<Integer> path = new ArrayList<>();
+        for (int cur = endNode; cur != -1; cur = parent[cur]) {
+            path.add(cur);
+        }
+        Collections.reverse(path);
+
+        for (int nodeId : path) {
+            graph.setMark(nodeId, BLACK);
+        }
+
+        visual.resetVisuals();
+        for(int nodeId : path) graph.setMark(nodeId, BLACK);
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            int a = path.get(i);
+            int b = path.get(i + 1);
+            visual.markEdge(a, b, true);
+            visual.pauseAndRedraw("Ruta Final: " + a + " -> " + b, 300);
+            checkPause();
         }
 
         visual.pauseAndRedraw(
-                "Bellman-Ford completado. Distancia mínima desde nodo "
-                        + startNode + " hasta nodo " + endNode + " = " + dist[endNode], 0);
+                "Fin. Distancia mínima: " + dist[endNode], 0);
 
         snapshots.add(Arrays.copyOf(dist, n));
         return new ShortestPathResult(dist[endNode], snapshots);
     }
+
 
     public static int runDijkstra(IVisualizer visual, int startNode, int endNode) {
         return runDijkstraWithEvolution(visual, startNode, endNode).finalDistance;
